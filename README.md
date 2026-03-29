@@ -1,77 +1,50 @@
-<<<<<<< HEAD
-# React + TypeScript + Vite
+# Project Blue-Pill (Client)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Project Blue-Pill의 프론트엔드 클라이언트 프로젝트입니다. 디자인 시스템 파운데이션과 현대적인 스택을 기반으로 구축되었습니다.
 
-Currently, two official plugins are available:
+## 🛠 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Core
+- **React 19**: 최신 React 기능을 활용한 컴포넌트 기반 UI 개발
+- **Vite 8**: 초고속 빌드 도구 및 개발 서버
+- **TypeScript**: 정적 타이핑을 통한 코드 안정성 확보
 
-## React Compiler
+### Styling & Design System
+- **Tailwind CSS v4**: 최신 v4 엔진 및 `@tailwindcss/vite` 플러그인 연동
+- **Design Tokens**: `tailwind.config.ts`를 통한 커스텀 파운데이션 설정
+  - **Typography**: Display, Header, Body 계층 구조 (10단계)
+  - **Color Palette**: Primary(Mint), Base(Grayscale), Secondary, Accents, System Status
+  - **Font**: Inter & sans-serif
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### State Management
+- **Zustand 5**: 가볍고 유연한 상태 관리 라이브러리
 
-## Expanding the ESLint configuration
+## 📁 Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+src/
+├── assets/          # 정적 에셋 (이미지, SVG 등)
+├── index.css        # Tailwind v4 @import 및 전역 스타일
+├── main.tsx         # 애플리케이션 진입점
+└── App.tsx          # 메인 컴포넌트 및 디자인 시스템 가이드
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+```bash
+npm install
 ```
-=======
-# client
->>>>>>> c641696bf69d750a754ef4f2dcea90b2b6f2f0a6
+
+### Development
+```bash
+npm run dev
+```
+
+### Build
+```bash
+npm run build
+```
+
+## 🎨 Design Foundation
+현재 `App.tsx`에서 프로젝트에 설정된 모든 디자인 토큰(컬러, 타이포그래피)을 시각적으로 확인할 수 있는 **Foundation Guide**를 제공하고 있습니다.
