@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
 const config: Config = {
   content: [
@@ -89,7 +90,21 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function({ addUtilities }) {
+      addUtilities({
+        '.typo-display-1': { fontSize: '96px', lineHeight: '128px', fontWeight: '700' },
+        '.typo-header-1': { fontSize: '40px', lineHeight: '62px', fontWeight: '700' },
+        '.typo-header-2': { fontSize: '32px', lineHeight: '42px', fontWeight: '700' },
+        '.typo-header-3': { fontSize: '24px', lineHeight: '36px', fontWeight: '700' },
+        '.typo-header-4': { fontSize: '22px', lineHeight: '34px', fontWeight: '700' },
+        '.typo-body-1': { fontSize: '18px', lineHeight: '28px', fontWeight: '400' },
+        '.typo-body-2': { fontSize: '16px', lineHeight: '20px', fontWeight: '400' },
+        '.typo-body-3': { fontSize: '14px', lineHeight: '20px', fontWeight: '500' },
+        '.typo-body-4': { fontSize: '12px', lineHeight: '18px', fontWeight: '500' },
+      })
+    })
+  ],
 };
 
 export default config;

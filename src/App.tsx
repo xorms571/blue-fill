@@ -1,141 +1,273 @@
-import './App.css'
+import Button from './components/common/Button';
+
+const PlusIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_494_966)">
+      <path d="M8 4.76953V11.2311" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M4.76929 8H11.2308" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M11.7692 1H4.23077C2.44647 1 1 2.44647 1 4.23077V11.7692C1 13.5536 2.44647 15 4.23077 15H11.7692C13.5536 15 15 13.5536 15 11.7692V4.23077C15 2.44647 13.5536 1 11.7692 1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+    <defs>
+      <clipPath id="clip0_494_966">
+        <rect width="16" height="16" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const VARIANTS = ['solid', 'Graysolid', 'Outline', 'Darksolid', 'Darkoutline', 'Rectangleoutline'] as const;
+const SIZES = ['l', 'm', 's', 'xs'] as const;
+
+const ColorSwatch = ({ name, token, hex, textColor = "text-base-50", border = false }: { name: string, token: string, hex: string, textColor?: string, border?: boolean }) => (
+  <div className={`flex items-center justify-between p-3 rounded-lg ${token} ${textColor} ${border ? 'border border-base-800' : ''}`}>
+    <div className="flex flex-col">
+      <span className="text-caption-1 font-bold uppercase tracking-tighter">{name}</span>
+      <span className="text-[10px] opacity-70">{token.replace('bg-', '')}</span>
+    </div>
+    <span className="text-[10px] font-mono font-medium">{hex}</span>
+  </div>
+);
 
 function App() {
   return (
-    <main className="min-h-screen bg-background-main text-base-100 font-sans p-10 space-y-20 pb-40">
-      {/* Header */}
-      <header className="border-b border-base-800 pb-10">
-        <h1 className="text-display-2 font-bold text-primary">Blue-Pill Foundation Guide</h1>
-        <p className="text-header-4 text-base-400 mt-2 font-regular italic">Verified via Tailwind Keywords</p>
+    <div className="min-h-screen bg-background-main text-base-50 p-10 font-sans">
+      <header className="mb-12 border-b border-base-800 pb-6">
+        <h1 className="text-header-1 font-bold text-primary mb-2">Design System Showcase</h1>
+        <p className="text-body-1 text-base-400">Common Component: Button (State & Size Matrix) & Typography</p>
+        <div className="mt-4 gap-6 text-caption-1 text-base-500 bg-base-950 p-3 rounded-lg border border-base-900 inline-flex">
+          <span className="flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full"></div> Default: Interactive (Hover/Pressed)</span>
+          <span className="flex items-center gap-2"><div className="w-2 h-2 bg-base-600 rounded-full"></div> Disabled: primary, secondary</span>
+        </div>
       </header>
 
-      {/* 1. Typography: Font Sizes & Line Heights */}
-      <section className="space-y-8">
-        <h2 className="text-header-1 font-bold text-accents-purple border-l-8 border-accents-purple pl-4 uppercase tracking-tighter">1. Font Sizes</h2>
-        <div className="space-y-10">
-          <div className="border-b border-base-900 pb-4"><p className="text-display-1 leading-none">Display-1 (96px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-display-2 leading-none">Display-2 (68px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-header-1">Header-1 (40px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-header-2">Header-2 (32px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-header-3">Header-3 (24px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-header-4">Header-4 (22px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-body-1">Body-1 (18px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-body-2">Body-2 (16px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-body-3 text-base-400">Body-3 (14px)</p></div>
-          <div className="border-b border-base-900 pb-4"><p className="text-body-4 text-base-500 italic">Body-4 (12px)</p></div>
-        </div>
-      </section>
-
-      {/* 2. Font Weights */}
-      <section className="space-y-8">
-        <h2 className="text-header-1 font-bold text-accents-blue border-l-8 border-accents-blue pl-4 uppercase tracking-tighter">2. Font Weights</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="p-6 bg-base-900 rounded-xl border border-base-800"><p className="text-header-2 font-regular italic">Regular</p><span className="text-body-4 text-base-500">400</span></div>
-          <div className="p-6 bg-base-900 rounded-xl border border-base-800"><p className="text-header-2 font-medium">Medium</p><span className="text-body-4 text-base-500">500</span></div>
-          <div className="p-6 bg-base-900 rounded-xl border border-base-800"><p className="text-header-2 font-semibold">Semibold</p><span className="text-body-4 text-base-500">600</span></div>
-          <div className="p-6 bg-base-900 rounded-xl border border-base-800"><p className="text-header-2 font-bold text-primary">Bold</p><span className="text-body-4 text-base-500">700</span></div>
-        </div>
-      </section>
-
-      {/* 3. Color Palette: All Tokens */}
-      <section className="space-y-12">
-        <h2 className="text-header-1 font-bold text-accents-neon border-l-8 border-accents-neon pl-4 uppercase tracking-tighter">3. Color Tokens</h2>
-
-        {/* Primary & Background */}
-        <div className="space-y-4">
-          <h3 className="text-header-4 font-bold text-base-300">Brand & Background</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="space-y-2"><div className="h-16 bg-primary rounded-lg shadow-lg"></div><p className="text-body-4 text-center">primary</p></div>
-            <div className="space-y-2"><div className="h-16 bg-primary-hovered rounded-lg"></div><p className="text-body-4 text-center">primary-hovered</p></div>
-            <div className="space-y-2"><div className="h-16 bg-background-main border border-base-700 rounded-lg"></div><p className="text-body-4 text-center">bg-main</p></div>
-            <div className="space-y-2"><div className="h-16 bg-background-hovered border border-base-700 rounded-lg"></div><p className="text-body-4 text-center">bg-hovered</p></div>
+      <div className="flex flex-col gap-24">
+        {/* Typography Section */}
+        <section className="space-y-10">
+          <div className="flex items-center gap-4">
+            <h2 className="text-header-3 font-bold text-primary uppercase tracking-widest">Typography</h2>
+            <div className="h-px flex-1 bg-linear-to-r from-base-800 to-transparent"></div>
           </div>
-        </div>
 
-        {/* Base Gray Scale (50-950) */}
-        <div className="space-y-4">
-          <h3 className="text-header-4 font-bold text-base-300">Base Neutral (All Levels)</h3>
-          <div className="flex flex-wrap gap-2">
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-50 border border-white/5"></div><p className="text-[10px] text-center font-bold">50</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-100 border border-white/5"></div><p className="text-[10px] text-center font-bold">100</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-200 border border-white/5"></div><p className="text-[10px] text-center font-bold">200</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-300 border border-white/5"></div><p className="text-[10px] text-center font-bold">300</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-400 border border-white/5"></div><p className="text-[10px] text-center font-bold">400</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-500 border border-white/5"></div><p className="text-[10px] text-center font-bold">500</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-600 border border-white/5"></div><p className="text-[10px] text-center font-bold">600</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-700 border border-white/5"></div><p className="text-[10px] text-center font-bold">700</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-800 border border-white/5"></div><p className="text-[10px] text-center font-bold">800</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-900 border border-white/5"></div><p className="text-[10px] text-center font-bold">900</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-base-950 border border-white/5"></div><p className="text-[10px] text-center font-bold">950</p></div>
-          </div>
-        </div>
-
-        {/* Secondary Scale (100-800) */}
-        <div className="space-y-4">
-          <h3 className="text-header-4 font-bold text-base-300">Secondary Scale</h3>
-          <div className="flex flex-wrap gap-2">
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-100"></div><p className="text-[10px] text-center font-bold">100</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-200"></div><p className="text-[10px] text-center font-bold">200</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-300"></div><p className="text-[10px] text-center font-bold">300</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-400"></div><p className="text-[10px] text-center font-bold">400</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-500"></div><p className="text-[10px] text-center font-bold">500</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-600"></div><p className="text-[10px] text-center font-bold">600</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-700"></div><p className="text-[10px] text-center font-bold">700</p></div>
-            <div className="flex-1 min-w-[60px] space-y-1"><div className="h-12 rounded bg-secondary-800"></div><p className="text-[10px] text-center font-bold">800</p></div>
-          </div>
-        </div>
-
-        {/* Accents & System */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="space-y-4">
-            <h3 className="text-header-4 font-bold text-base-300">Accents</h3>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="h-12 bg-accents-neon rounded flex items-center justify-center text-black font-bold text-[10px]">Neon</div>
-              <div className="h-12 bg-accents-orange rounded flex items-center justify-center text-white font-bold text-[10px]">Orange</div>
-              <div className="h-12 bg-accents-pink rounded flex items-center justify-center text-white font-bold text-[10px]">Pink</div>
-              <div className="h-12 bg-accents-purple rounded flex items-center justify-center text-white font-bold text-[10px]">Purple</div>
-              <div className="h-12 bg-accents-yellow rounded flex items-center justify-center text-black font-bold text-[10px]">Yellow</div>
-              <div className="h-12 bg-accents-blue rounded flex items-center justify-center text-white font-bold text-[10px]">Blue</div>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <h3 className="text-header-4 font-bold text-base-300">System Feedback</h3>
-            <div className="grid grid-cols-1 gap-2">
-              <div className="flex gap-2">
-                <div className="flex-1 h-10 bg-system-success rounded flex items-center justify-center text-black font-bold text-[10px]">Success</div>
-                <div className="flex-1 h-10 bg-system-success-hovered rounded flex items-center justify-center text-black font-bold text-[10px]">Hover</div>
-              </div>
-              <div className="flex gap-2">
-                <div className="flex-1 h-10 bg-system-alert rounded flex items-center justify-center text-black font-bold text-[10px]">Alert</div>
-                <div className="flex-1 h-10 bg-system-alert-hovered rounded flex items-center justify-center text-black font-bold text-[10px]">Hover</div>
-              </div>
-              <div className="flex gap-2">
-                <div className="flex-1 h-10 bg-system-error rounded flex items-center justify-center text-white font-bold text-[10px]">Error</div>
-                <div className="flex-1 h-10 bg-system-error-hovered rounded flex items-center justify-center text-white font-bold text-[10px]">Hover</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-base-950/30 p-8 rounded-2xl border border-base-900/50">
+            <div className="space-y-8">
+              <h3 className="text-header-4 text-base-300 border-b border-base-800 pb-2">Display & Header</h3>
+              <div className="space-y-6">
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Display-1 (96px / 128px)</span>
+                  <p className="text-display-1">Display 1</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Display-2 (68px / 98px)</span>
+                  <p className="text-display-2">Display 2</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Header-1 (40px / 62px)</span>
+                  <p className="text-header-1">Header 1</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Header-2 (32px / 42px)</span>
+                  <p className="text-header-2">Header 2</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Header-3 (24px / 36px)</span>
+                  <p className="text-header-3">Header 3</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Header-4 (22px / 34px)</span>
+                  <p className="text-header-4">Header 4</p>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* 4. Interactive Components */}
-      <section className="space-y-8">
-        <h2 className="text-header-1 font-bold text-accents-pink border-l-8 border-accents-pink pl-4 uppercase tracking-tighter">4. Interactive Preview</h2>
-        <div className="flex flex-wrap gap-4 p-10 bg-base-950 rounded-3xl border border-base-800 shadow-inner">
-          <button className="px-10 py-4 bg-primary hover:bg-primary-hovered text-black font-bold rounded-full transition-all shadow-[0_0_20px_rgba(98,246,181,0.2)]">
-            Primary Action
-          </button>
-          <button className="px-10 py-4 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary/10 transition-colors">
-            Secondary Outline
-          </button>
-          <div className="px-6 py-4 bg-background-hovered border border-base-700 rounded-2xl flex items-center gap-4">
-            <div className="w-3 h-3 bg-accents-neon rounded-full animate-pulse"></div>
-            <span className="text-body-2 font-medium">System Live Status</span>
+            <div className="space-y-8">
+              <h3 className="text-header-4 text-base-300 border-b border-base-800 pb-2">Body</h3>
+              <div className="space-y-6">
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Body-1 (18px / 28px)</span>
+                  <p className="text-body-1">The quick brown fox jumps over the lazy dog. 0123456789</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Body-2 (16px / 20px)</span>
+                  <p className="text-body-2">The quick brown fox jumps over the lazy dog. 0123456789</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Body-3 (14px / 20px)</span>
+                  <p className="text-body-3">The quick brown fox jumps over the lazy dog. 0123456789</p>
+                </div>
+                <div>
+                  <span className="text-base-600 text-[10px] uppercase font-bold tracking-widest block mb-1">Body-4 (12px / 18px)</span>
+                  <p className="text-body-4">The quick brown fox jumps over the lazy dog. 0123456789</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              <h3 className="text-header-4 text-base-300 border-b border-base-800 pb-2">Font Weight</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-base-600 text-[10px] w-20 uppercase font-bold tracking-widest">Regular</span>
+                  <p className="font-regular text-header-3">Regular (400)</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-base-600 text-[10px] w-20 uppercase font-bold tracking-widest">Medium</span>
+                  <p className="font-medium text-header-3">Medium (500)</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-base-600 text-[10px] w-20 uppercase font-bold tracking-widest">Semibold</span>
+                  <p className="font-semibold text-header-3">Semibold (600)</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-base-600 text-[10px] w-20 uppercase font-bold tracking-widest">Bold</span>
+                  <p className="font-bold text-header-3">Bold (700)</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-8 md:col-span-2">
+              <h3 className="text-header-4 text-base-300 border-b border-base-800 pb-2">Color Palette</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {/* Brand & Background */}
+                <div className="space-y-4">
+                  <h4 className="text-caption-1 text-base-500 uppercase font-bold tracking-widest mb-4">Brand & Background</h4>
+                  <div className="flex flex-col gap-2">
+                    <ColorSwatch name="Primary" token="bg-primary" hex="#62F6B5" textColor="text-background-main" />
+                    <ColorSwatch name="Primary Hover" token="bg-primary-hovered" hex="#82F8C4" textColor="text-background-main" />
+                    <ColorSwatch name="Background Main" token="bg-background-main" hex="#0E0E13" border />
+                    <ColorSwatch name="Background Hover" token="bg-background-hovered" hex="#18181B" border />
+                  </div>
+                </div>
+
+                {/* System Colors */}
+                <div className="space-y-4">
+                  <h4 className="text-caption-1 text-base-500 uppercase font-bold tracking-widest mb-4">System States</h4>
+                  <div className="flex flex-col gap-2">
+                    <ColorSwatch name="Success" token="bg-system-success" hex="#7ED6F8" textColor="text-background-main" />
+                    <ColorSwatch name="Alert" token="bg-system-alert" hex="#FFE858" textColor="text-background-main" />
+                    <ColorSwatch name="Error" token="bg-system-error" hex="#F8834F" textColor="text-background-main" />
+                  </div>
+                </div>
+
+                {/* Accents */}
+                <div className="space-y-4">
+                  <h4 className="text-caption-1 text-base-500 uppercase font-bold tracking-widest mb-4">Accents</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="w-10 h-10 rounded bg-accents-neon" title="Neon"></div>
+                    <div className="w-10 h-10 rounded bg-accents-orange" title="Orange"></div>
+                    <div className="w-10 h-10 rounded bg-accents-pink" title="Pink"></div>
+                    <div className="w-10 h-10 rounded bg-accents-purple" title="Purple"></div>
+                    <div className="w-10 h-10 rounded bg-accents-yellow" title="Yellow"></div>
+                    <div className="w-10 h-10 rounded bg-accents-blue" title="Blue"></div>
+                  </div>
+                </div>
+
+                {/* Base Scale */}
+                <div className="space-y-4 md:col-span-2 lg:col-span-3">
+                  <h4 className="text-caption-1 text-base-500 uppercase font-bold tracking-widest mb-4">Base Scale (Grayscale)</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                    {['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'].map(level => (
+                      <div key={level} className="flex flex-col gap-1">
+                        <div className={`h-12 rounded bg-base-${level} border border-white/5`}></div>
+                        <span className="text-[10px] text-base-500 font-bold">Base-{level}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-    </main>
-  )
+        </section>
+
+        {/* Full Matrix Section */}
+        {VARIANTS.map((variant) => (
+          <section key={variant} className="space-y-10">
+            <div className="flex items-center gap-4">
+              <h2 className="text-header-3 font-bold text-primary uppercase tracking-widest">{variant}</h2>
+              <div className="h-px flex-1 bg-linear-to-r from-base-800 to-transparent"></div>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-12">
+              {SIZES.map((size) => (
+                <div key={`${variant}-${size}`} className="space-y-6 p-6 rounded-2xl bg-base-950/50 border border-base-900/50">
+                  <h3 className="text-caption-1 text-base-400 font-bold border-b border-base-900 pb-2 flex justify-between uppercase">
+                    <span>Size: {size.toUpperCase()}</span>
+                    <span className="text-base-600">H: {size === 'l' ? '48' : size === 'm' ? '40' : size === 's' ? '36' : '28'}px</span>
+                  </h3>
+
+                  <div className="flex flex-col gap-8 items-start">
+                    {/* Default State */}
+                    <div className="space-y-2 w-full">
+                      <span className="text-[10px] text-base-600 uppercase font-bold tracking-tighter">Default / Hover / Pressed</span>
+                      <div className="flex items-center gap-4">
+                        <Button variant={variant} size={size}>
+                          {variant}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Disabled State */}
+                    <div className="space-y-2 w-full">
+                      <span className="text-[10px] text-base-600 uppercase font-bold tracking-tighter">Disabled</span>
+                      <div className="flex items-center gap-4">
+                        <Button variant={variant} size={size} disabled>
+                          Disabled
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Icon Version */}
+                    <div className="space-y-2 w-full">
+                      <span className="text-[10px] text-base-600 uppercase font-bold tracking-tighter">With Icon</span>
+                      <div className="flex items-center gap-4">
+                        <Button variant={variant} size={size} leftIcon={<PlusIcon />}>
+                          {size.toUpperCase()} Action
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        {/* Interaction Playground */}
+        <section className="mt-12 p-10 bg-linear-to-br from-base-900 to-background-main rounded-3xl border border-primary/20">
+          <h2 className="text-header-2 font-bold text-primary mb-8">Interaction Playground</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="space-y-6">
+              <h3 className="text-header-4 text-base-200">Loading State Transitions</h3>
+              <div className="flex flex-wrap gap-4">
+                <Button variant="solid" size='l' loading>Processing...</Button>
+                <Button variant="solid" size='m' loading>Processing...</Button>
+                <Button variant="solid" size='s' loading>Processing...</Button>
+                <Button variant="Rectangleoutline" size='xs' loading></Button>
+                <Button variant="Outline" size='l' loading>Processing...</Button>
+                <Button variant="Outline" size='m' loading>Processing...</Button>
+                <Button variant="Outline" size='s' loading>Processing...</Button>
+                <Button variant="Outline" size='xs' loading>Wait</Button>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <h3 className="text-header-4 text-base-200">Layout Integration</h3>
+              <div className="space-y-4">
+                <Button fullWidth variant="solid" size="l" rightIcon={<PlusIcon />}>Confirm Order</Button>
+                <div className="flex gap-4">
+                  <Button fullWidth variant="Darkoutline" size="m">Dismiss</Button>
+                  <Button fullWidth variant="Rectangleoutline" size="m">Settings</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer className="mt-32 pt-12 border-t border-base-900 text-center">
+        <p className="text-base-600 text-caption-1 uppercase tracking-[0.2em]">Cyberpunk Design System Framework | Component: Button v2.5.0</p>
+        <p className="text-base-800 text-[10px] mt-2">© 2024 BLUE PILL PROJECT. ALL RIGHTS RESERVED.</p>
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;
