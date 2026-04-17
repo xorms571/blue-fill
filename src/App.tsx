@@ -157,31 +157,69 @@ function App() {
                 <div className="space-y-4">
                   <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Core & State</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <ColorSwatch name="Primary" token="bg-primary" hex="#62F6B5" textColor="text-background-main" />
                     <ColorSwatch name="Background" token="bg-background-main" hex="#0E0E13" border />
+                    <ColorSwatch name="Background Hovered" token="bg-background-hovered" hex="#18181B" border />
                     <ColorSwatch name="Success" token="bg-system-success" hex="#7ED6F8" textColor="text-background-main" />
                     <ColorSwatch name="Error" token="bg-system-error" hex="#F8834F" textColor="text-background-main" />
+                    <ColorSwatch name="Primary" token="bg-primary" hex="#62F6B5" textColor="text-background-main" />
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Accents</span>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {['neon', 'orange', 'pink', 'purple', 'yellow', 'blue'].map(c => (
-                      <div key={c} className={`aspect-square rounded-lg bg-accents-${c} shadow-lg shadow-accents-${c}/10 hover:scale-110 transition-transform cursor-help`} title={c}></div>
-                    ))}
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-base-900">
+                    <div className="aspect-square rounded-lg flex justify-center items-center bg-accents-neon shadow-lg shadow-accents-neon/10 hover:scale-103 transition-transform cursor-pointer" title="neon">neon</div>
+                    <div className="aspect-square rounded-lg flex justify-center items-center bg-accents-orange shadow-lg shadow-accents-orange/10 hover:scale-103 transition-transform cursor-pointer" title="orange">orange</div>
+                    <div className="aspect-square rounded-lg flex justify-center items-center bg-accents-pink shadow-lg shadow-accents-pink/10 hover:scale-103 transition-transform cursor-pointer" title="pink">pink</div>
+                    <div className="aspect-square rounded-lg flex justify-center items-center bg-accents-purple shadow-lg shadow-accents-purple/10 hover:scale-103 transition-transform cursor-pointer" title="purple">purple</div>
+                    <div className="aspect-square rounded-lg flex justify-center items-center bg-accents-yellow shadow-lg shadow-accents-yellow/10 hover:scale-103 transition-transform cursor-pointer" title="yellow">yellow</div>
+                    <div className="aspect-square rounded-lg flex justify-center items-center bg-accents-blue shadow-lg shadow-accents-blue/10 hover:scale-103 transition-transform cursor-pointer" title="blue">blue</div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Grayscale (Base 50-950)</span>
                   <div className="grid grid-cols-5 gap-1.5">
-                    {['50', '100', '200', '300', '400', '500', '600', '700', '800', '950'].map(level => (
-                      <div key={level} className="space-y-1">
-                        <div className={`h-12 rounded bg-base-${level} border border-white/5`}></div>
-                        <span className="text-[8px] text-base-600 font-bold text-center block">{level}</span>
-                      </div>
-                    ))}
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-50 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">50</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-100 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">100</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-200 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">200</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-300 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">300</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-400 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">400</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-500 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">500</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-600 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">600</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-700 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">700</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-800 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">800</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-12 rounded bg-base-950 border border-white/5"></div>
+                      <span className="text-[8px] text-base-600 font-bold text-center block">950</span>
+                    </div>
                   </div>
                 </div>
               </div>
