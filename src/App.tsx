@@ -4,6 +4,7 @@ import CharacterProfileItem from './components/common/CharacterProfileItem';
 import Chip from './components/common/Chip';
 import InstagramPostCard from './components/common/InstagramPostCard';
 import Dropdown from './components/common/Dropdown';
+import SearchBar from './components/common/SearchBar';
 
 // --- Icons ---
 const PlusIcon = () => (
@@ -75,6 +76,7 @@ const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string })
 
 function App() {
   const [dropdownValue, setDropdownValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState('Search');
 
   return (
     <div className="min-h-screen bg-background-main text-base-50 p-4 md:p-10 font-sans selection:bg-primary selection:text-background-main">
@@ -394,6 +396,51 @@ function App() {
                 <div className="grid grid-cols-2 gap-4">
                   <Button fullWidth variant="Darkoutline" size="m">Cancel</Button>
                   <Button fullWidth variant="Rectangleoutline" size="m">Settings</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 7. Search Bars Showcase */}
+        <section>
+          <SectionTitle title="06 Search Bars" subtitle="Search inputs with dark and light themes, matching the design spec." />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Dark Variant */}
+            <div className="space-y-8 bg-base-800/40 p-4 md:p-10 rounded-3xl border border-base-900/50">
+              <h3 className="text-header-4 text-base-200 font-bold flex items-center gap-3">
+                <span className="text-primary text-body-4">/</span> Dark Variant
+              </h3>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Case 1: Empty / Default</span>
+                  <SearchBar variant="dark" placeholder="Search" />
+                </div>
+                <div className="space-y-4 pt-6">
+                  <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Case 2: With Value / Focus</span>
+                  <SearchBar variant="dark" placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} onClear={() => setSearchValue('')} />
+                </div>
+              </div>
+            </div>
+
+            {/* Light Variant */}
+            <div className="space-y-8 bg-base-800/40 p-4 md:p-10 rounded-3xl border border-base-900/50">
+              <h3 className="text-header-4 text-base-200 font-bold flex items-center gap-3">
+                <span className="text-primary text-body-4">/</span> Light Variant
+              </h3>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Case 3: Empty / Default</span>
+                  <SearchBar variant="light" placeholder="Search" />
+                </div>
+                <div className="space-y-4 pt-6">
+                  <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Case 4 & 5: With Value / Focus</span>
+                  <SearchBar
+                    variant="light"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    onClear={() => setSearchValue('')}
+                  />
                 </div>
               </div>
             </div>
