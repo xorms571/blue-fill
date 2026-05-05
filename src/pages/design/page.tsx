@@ -6,7 +6,6 @@ import CharacterProfileItem from '../../components/common/CharacterProfileItem';
 import InstagramPostCard from '../../components/common/InstagramPostCard';
 import SearchBar from '../../components/common/SearchBar';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../../components/layout/Sidebar';
 import PageLayout from '../../components/layout/PageLayout';
 
 // --- Icons ---
@@ -80,7 +79,6 @@ const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string })
 function DesignSystemShowcase() {
     const [dropdownValue, setDropdownValue] = useState<string>('');
     const [searchValue, setSearchValue] = useState('Search');
-    const navigate = useNavigate();
 
     return (
         <PageLayout>
