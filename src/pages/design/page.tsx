@@ -5,7 +5,6 @@ import Dropdown from '../../components/common/Dropdown';
 import CharacterProfileItem from '../../components/common/CharacterProfileItem';
 import InstagramPostCard from '../../components/common/InstagramPostCard';
 import SearchBar from '../../components/common/SearchBar';
-import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 
 // --- Icons ---
