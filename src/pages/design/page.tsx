@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import Button from '../../components/common/Button';
 import Chip from '../../components/common/Chip';
+import Checkbox from '../../components/common/Checkbox';
+import Tabs from '../../components/common/Tabs';
 import Dropdown from '../../components/common/Dropdown';
 import CharacterProfileItem from '../../components/common/CharacterProfileItem';
 import InstagramPostCard from '../../components/common/InstagramPostCard';
 import SearchBar from '../../components/common/SearchBar';
 import PageLayout from '../../components/layout/PageLayout';
+import { useAuthStore } from '../../store/useAuthStore';
 
 // --- Icons ---
 const PlusIcon = () => (
@@ -28,7 +31,7 @@ const UserIcon = () => (
         <g clipPath="url(#clip0_778_4480)">
             <g clipPath="url(#clip1_778_4480)">
                 <path d="M2.37872 7.10151C2.92515 6.37003 3.79782 5.89648 4.78109 5.89648C5.48105 5.89648 6.12496 6.13646 6.63504 6.53864" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M4.35295 9.10705H1.35621C1.12913 9.10705 0.911346 9.0168 0.750779 8.85626C0.590208 8.69572 0.5 8.47792 0.5 8.25084V1.40114C0.5 1.17405 0.590208 0.956276 0.750779 0.795701C0.911346 0.63513 1.12913 0.544922 1.35621 0.544922H8.20591C8.433 0.544922 8.65076 0.63513 8.81138 0.795701C8.97192 0.956276 9.06217 1.17405 9.06217 1.40114V3.96978" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4.35295 9.10705H1.35621C1.12913 9.10705 0.911346 9.0168 0.750779 8.85626C0.590208 8.69572 0.5 8.47792 0.5 8.25084V1.40114C0.5 1.17405 0.590208 0.956276 0.750779 0.795701C0.911346 0.63513 1.12913 0.544922H8.20591C8.433 0.544922 8.65076 0.63513 8.81138 0.795701C8.97192 0.956276 9.06217 1.17405 9.06217 1.40114V3.96978" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4.78105 4.61161C5.49037 4.61161 6.06537 4.03659 6.06537 3.32729C6.06537 2.61798 5.49037 2.04297 4.78105 2.04297C4.07175 2.04297 3.49673 2.61798 3.49673 3.32729C3.49673 4.03659 4.07175 4.61161 4.78105 4.61161Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M6.29072 9.05058C5.99025 8.99826 5.99025 8.56693 6.29072 8.51466C7.37928 8.32528 8.24507 7.49615 8.48134 6.41681L8.49945 6.33407C8.56446 6.03711 8.98732 6.03526 9.05488 6.33164L9.07688 6.42806C9.32193 7.50231 10.1879 8.32443 11.2735 8.51329C11.5755 8.56583 11.5755 8.99938 11.2735 9.05195C10.1879 9.24074 9.32193 10.0629 9.07688 11.1372L9.05488 11.2336C8.98732 11.5299 8.56446 11.5281 8.49945 11.2311L8.48134 11.1484C8.24507 10.069 7.37928 9.23989 6.29072 9.05058Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
             </g>
@@ -52,6 +55,12 @@ const DROPDOWN_OPTIONS = [
     { label: 'Option 1', value: '1' },
     { label: 'Option 2', value: '2' },
     { label: 'Option 3', value: '3' },
+];
+
+const TAB_ITEMS = [
+    { id: 'setting', label: 'Character Setting' },
+    { id: 'inventory', label: 'Inventory' },
+    { id: 'skills', label: 'Skills' },
 ];
 
 // --- Sub-components ---
@@ -78,6 +87,9 @@ const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string })
 function DesignSystemShowcase() {
     const [dropdownValue, setDropdownValue] = useState<string>('');
     const [searchValue, setSearchValue] = useState('Search');
+    const [checkboxChecked, setCheckboxChecked] = useState(true);
+    const [activeTab, setActiveTab] = useState('setting');
+    const openModal = useAuthStore((state) => state.openModal);
 
     return (
         <PageLayout>
@@ -93,6 +105,14 @@ function DesignSystemShowcase() {
                         A high-fidelity React component library for the Blue Pill ecosystem.
                         Built with TypeScript and TailwindCSS, focused on interactive precision and dark-themed aesthetics.
                     </p>
+                </div>
+                <div className="shrink-0 flex gap-4">
+                    <Button variant="Outline" size="m" onClick={() => openModal('login')}>
+                        로그인 모달 열기
+                    </Button>
+                    <Button variant="solid" size="m" onClick={() => openModal('signup-step1')}>
+                        회원가입 모달 열기
+                    </Button>
                 </div>
             </header>
 
@@ -115,6 +135,7 @@ function DesignSystemShowcase() {
                                     <div className="space-y-4">
                                         <p className="text-display-1 truncate">Display 1 (96px)</p>
                                         <p className="text-display-2">Display 2 (68px)</p>
+                                        <p className="text-display-3">Display 3 (48px)</p>
                                         <p className="text-header-1">Header 1 (40px)</p>
                                         <p className="text-header-2">Header 2 (32px)</p>
                                         <p className="text-header-3 text-primary">Header 3 (24px)</p>
@@ -232,7 +253,7 @@ function DesignSystemShowcase() {
 
                 {/* 3. Atomic Components */}
                 <section>
-                    <SectionTitle title="02 Atomic Components" subtitle="Simple elements: Chips and Dropdowns with all permutations." />
+                    <SectionTitle title="02 Atomic Components" subtitle="Simple elements: Chips, Dropdowns, Checkboxes, and Tabs." />
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Chips Matrix */}
@@ -294,10 +315,87 @@ function DesignSystemShowcase() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Checkbox Showcase */}
+                        <div className="bg-base-900/30 p-4 md:p-10 rounded-3xl border border-base-800/50 space-y-10 lg:col-span-2">
+                            <h4 className="text-header-4 text-base-300 font-bold border-b border-base-800 pb-4">Checkboxes</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                <div className="space-y-4">
+                                    <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Interactive</span>
+                                    <div className="flex items-center p-4 bg-base-950/50 rounded-xl border border-base-900/50">
+                                        <Checkbox
+                                            label={checkboxChecked ? "Checked State" : "Unchecked State"}
+                                            checked={checkboxChecked}
+                                            onChange={setCheckboxChecked}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Default Unchecked</span>
+                                    <div className="flex items-center p-4 bg-base-950/50 rounded-xl border border-base-900/50">
+                                        <Checkbox label="Unchecked" />
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Default Checked</span>
+                                    <div className="flex items-center p-4 bg-base-950/50 rounded-xl border border-base-900/50">
+                                        <Checkbox label="Checked" defaultChecked />
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Disabled States</span>
+                                    <div className="flex flex-col gap-4 p-4 bg-base-950/50 rounded-xl border border-base-900/50">
+                                        <Checkbox label="Disabled Unchecked" disabled />
+                                        <Checkbox label="Disabled Checked" disabled defaultChecked />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Tabs Showcase */}
+                        <div className="bg-base-900/30 p-4 md:p-10 rounded-3xl border border-base-800/50 space-y-10 lg:col-span-2">
+                            <h4 className="text-header-4 text-base-300 font-bold border-b border-base-800 pb-4">Tabs (Taps)</h4>
+                            <div className="space-y-12">
+                                <div className="space-y-4">
+                                    <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Interactive Tabs (Gap: 12px)</span>
+                                    <div className="flex items-center p-8 bg-base-950/50 rounded-2xl border border-base-900/50">
+                                        <Tabs
+                                            items={TAB_ITEMS}
+                                            activeId={activeTab}
+                                            onTabChange={setActiveTab}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-base-900">
+                                    <div className="space-y-4">
+                                        <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Active State</span>
+                                        <div className="flex items-center p-6 bg-base-950/30 rounded-xl border border-base-900/30">
+                                            <Tabs
+                                                items={[{ id: '1', label: 'Character Setting' }]}
+                                                activeId="1"
+                                                onTabChange={() => { }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <span className="text-[10px] text-base-600 font-bold uppercase tracking-widest">Default State</span>
+                                        <div className="flex items-center p-6 bg-base-950/30 rounded-xl border border-base-900/30">
+                                            <Tabs
+                                                items={[{ id: '1', label: 'Character Setting' }]}
+                                                activeId="2"
+                                                onTabChange={() => { }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                {/* 4. Button Deep Dive */}
+
+                {/* 4. Button Matrix */}
                 <section>
                     <SectionTitle title="03 Button Matrix" subtitle="Complete permutation of all button styles, sizes, and states." />
 

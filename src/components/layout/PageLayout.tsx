@@ -23,7 +23,7 @@ const PageLayout = ({ children, className, containerClassName }: PageLayoutProps
       )}>
         {/* 중앙 정렬 컨테이너 */}
         <div className={cn(
-          "max-w-[1400px] mx-auto w-full px-6 md:px-16 py-10 md:py-20",
+          "max-w-350 mx-auto w-full px-6 md:px-16 py-10 md:py-20",
           containerClassName
         )}>
           {children}

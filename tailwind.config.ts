@@ -16,6 +16,7 @@ const config: Config = {
       fontSize: {
         'display-1': ['96px', { lineHeight: '128px' }],
         'display-2': ['68px', { lineHeight: '98px' }],
+        'display-3': ['48px', { lineHeight: '68px' }],
         'header-1': ['40px', { lineHeight: '62px' }],
         'header-2': ['32px', { lineHeight: '42px' }],
         'header-3': ['24px', { lineHeight: '36px' }],
