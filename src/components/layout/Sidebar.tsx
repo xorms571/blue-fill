@@ -1,5 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
+import { useAuthStore } from '../../store/useAuthStore';
+import { logout as apiLogout } from '../../lib/authApi';
 
 // --- Icons ---
 const HomeIcon = () => (
@@ -23,9 +25,20 @@ const ProfileIcon = () => (
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, user, logout, openModal } = useAuthStore();
 
   const isHome = location.pathname === '/';
   const isLibrary = location.pathname === '/library';
+  const isProfile = location.pathname === '/profile';
+
+  const handleLogout = async () => {
+    try {
+      await apiLogout();
+      logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
     <nav className={cn(
@@ -61,9 +74,47 @@ const Sidebar = () => {
           <LibraryIcon />
         </button>
 
-        <button className="p-2 text-base-500 hover:text-primary transition-colors cursor-pointer">
-          <ProfileIcon />
-        </button>
+        {isAuthenticated ? (
+          <div className="relative group">
+            <button
+              className={cn(
+                "p-2 transition-colors cursor-pointer rounded-xl",
+                isProfile ? "text-primary md:bg-primary/10" : "text-base-500 hover:text-primary"
+              )}
+              onClick={() => navigate('/profile')}
+            >
+              <ProfileIcon />
+            </button>
+            {/* 내 정보 툴팁/팝업 */}
+            <div className={cn(
+              "absolute hidden group-hover:block min-w-48 shadow-2xl z-60 bg-base-900 border border-base-800 p-4 rounded-2xl",
+              // Mobile: 버튼 위로 뜸
+              "bottom-full left-1/2 -translate-x-1/2 mb-3",
+              // Desktop: 버튼 오른쪽으로 뜸
+              "md:bottom-auto md:top-0 md:left-full md:translate-x-0 md:mb-0 md:ml-4",
+              // 마우스 이동 시 닫히지 않도록 하는 투명한 다리 (Bridge)
+              "after:content-[''] after:absolute",
+              "after:after:-bottom-3 after:left-0 after:w-full after:h-3", // Mobile bridge
+              "md:after:bottom-auto md:after:-left-4 md:after:top-0 md:after:w-4 md:after:h-full" // Desktop bridge
+            )}>
+              <div className="text-body-2 font-bold text-base-50 mb-1 truncate">{user?.nickname || '사용자'}</div>
+              <div className="text-body-3 text-base-500 mb-3 truncate">{user?.email}</div>
+              <button
+                onClick={handleLogout}
+                className="w-full py-2 bg-base-800 hover:bg-base-700 text-base-200 text-body-3 rounded-lg transition-colors cursor-pointer"
+              >
+                로그아웃
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            className="p-2 text-base-500 hover:text-primary transition-colors cursor-pointer"
+            onClick={() => openModal()}
+          >
+            <ProfileIcon />
+          </button>
+        )}
       </div>
     </nav>
   );

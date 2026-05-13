@@ -2,11 +2,13 @@ import React, { useState, useRef } from 'react';
 import { useAuthStore } from '../../../store/useAuthStore';
 import Button from '../../common/Button';
 import TextInput from '../../common/TextInput';
+import { updateProfile, getMyProfile } from '../../../lib/authApi';
 
 const SignupStep2View: React.FC = () => {
-  const setView = useAuthStore((state) => state.setView);
+  const { setView, setAuthenticated } = useAuthStore();
   const [nickname, setNickname] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,9 +22,34 @@ const SignupStep2View: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // 여기서 프로필 업데이트 API 호출
-    setView('signup-success');
+  const handleSubmit = async () => {
+    if (!nickname.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // 1. 프로필 업데이트 (이미지는 현재 base64 문자열 그대로 보냄, 필요시 S3 업로드 로직으로 대체 가능)
+      await updateProfile({
+        nickname,
+        profileImageUrl: imagePreview
+      });
+
+      // 2. 업데이트된 유저 정보 다시 가져오기
+      const updatedUser = await getMyProfile();
+      
+      // 3. 스토어 업데이트
+      setAuthenticated(true, updatedUser);
+
+      // 4. 성공 화면으로 이동
+      setView('signup-success');
+    } catch (error) {
+      console.error('Profile update failed:', error);
+      alert('프로필 업데이트에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -95,6 +122,7 @@ const SignupStep2View: React.FC = () => {
           size="l"
           fullWidth
           onClick={handleSubmit}
+          loading={isLoading}
         >
           확인
         </Button>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { useAuthStore } from '../../../store/useAuthStore';
-import { loginWithSocial } from '../../../lib/authApi';
+import { SOCIAL_LOGIN_URLS } from '../../../lib/authApi';
 import Button from '../../common/Button';
 
 const GoogleIcon = () => (
@@ -19,31 +18,23 @@ const DiscordIcon = () => (
 );
 
 const LoginView: React.FC = () => {
-    const setView = useAuthStore((state) => state.setView);
-
-    const handleGoogleLogin = async () => {
-        try {
-            await loginWithSocial('google');
-        } catch (e) {
-            setView('signup-step1');
-        }
+    const handleGoogleLogin = () => {
+        window.location.href = SOCIAL_LOGIN_URLS.google;
     };
 
-    const handleDiscordLogin = async () => {
-        try {
-            await loginWithSocial('discord');
-        } catch (e) {
-            setView('signup-step1');
-        }
+    const handleDiscordLogin = () => {
+        window.location.href = SOCIAL_LOGIN_URLS.discord;
     };
 
     return (
         <div className="flex flex-col items-center max-w-sm w-full mx-auto">
+            {/* 제목 */}
             <div className="text-center space-y-3 mb-10">
                 <h2 className="text-[20px] font-bold text-primary tracking-widest uppercase">BLUEPILL</h2>
                 <h1 className="text-[32px] font-bold text-base-50">로그인</h1>
             </div>
 
+            {/* 버튼 영역 */}
             <div className="flex flex-col w-full gap-4">
                 <Button
                     variant='Rectangleoutline'

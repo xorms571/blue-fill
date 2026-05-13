@@ -85,7 +85,7 @@ const Dropdown = ({
         {/* 더블 쉐브론 아이콘 */}
         <div className="flex flex-col -space-y-1 ml-2 shrink-0 text-base-500">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-            <g clip-path="url(#clip0_765_4899)">
+            <g clipPath="url(#clip0_765_4899)">
               <path d="M2 5L4 7L6 5" stroke="currentColor" />
               <path d="M2 3L4 1L6 3" stroke="currentColor" />
             </g>
@@ -122,8 +122,8 @@ const Dropdown = ({
                 <span className="truncate">{option.label}</span>
                 {isSelected && (
                   <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                    <g clip-path="url(#clip0_1189_1053)">
-                      <g clip-path="url(#clip1_1189_1053)">
+                    <g clipPath="url(#clip0_1189_1053)">
+                      <g clipPath="url(#clip1_1189_1053)">
                         <path d="M0.5 4.83466L1.97 6.72463C2.0196 6.78909 2.08316 6.84148 2.1559 6.87788C2.22864 6.91423 2.30868 6.93366 2.39 6.93463C2.47001 6.9356 2.54922 6.91864 2.62188 6.88515C2.69453 6.8516 2.75879 6.80228 2.81 6.74079L7.5 1.06543" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round" />
                       </g>
                     </g>
