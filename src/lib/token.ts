@@ -28,8 +28,19 @@ export const setAccessToken = (token: string | null) => {
 export const getPublicIdFromToken = (token: string): string | null => {
   try {
     const payload = token.split('.')[1];
-    // base64url을 base64로 변환하여 디코딩
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    if (!payload) return null;
+    
+    // base64url을 base64로 변환
+    let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    
+    // 패딩 추가
+    const pad = base64.length % 4;
+    if (pad) {
+      if (pad === 1) throw new Error('Invalid base64 length');
+      base64 += new Array(5 - pad).join('=');
+    }
+    
+    // 디코딩
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
@@ -38,6 +49,7 @@ export const getPublicIdFromToken = (token: string): string | null => {
     );
     return JSON.parse(jsonPayload).publicId;
   } catch (e) {
+    console.error('Failed to decode token:', e);
     return null;
   }
 };
