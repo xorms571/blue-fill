@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { reissueToken } from '../../lib/authApi';
+import { setAccessToken } from '../../lib/token';
 
 const CallbackPage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,10 +11,13 @@ const CallbackPage: React.FC = () => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // 즉시 토큰 재발급 호출 (withCredentials: true 는 apiFetch에 설정됨)
+        // 즉시 토큰 재발급 호출
         const response = await reissueToken();
         
-        // 로그인 성공 처리
+        // 액세스 토큰 저장
+        setAccessToken(response.accessToken);
+        
+        // 로그인 상태 업데이트
         setAuthenticated(true);
 
         if (response.isNewUser) {
@@ -25,7 +29,8 @@ const CallbackPage: React.FC = () => {
         navigate('/', { replace: true });
       } catch (error) {
         console.error('Authentication failed:', error);
-        // 실패 시 로그아웃 처리 및 로그인 화면으로 유도
+        // 실패 시 토큰 삭제 및 로그아웃 처리
+        setAccessToken(null);
         logout();
         openModal('login');
         navigate('/', { replace: true });

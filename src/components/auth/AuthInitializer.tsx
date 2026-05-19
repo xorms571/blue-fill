@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { reissueToken, getMyProfile } from '../../lib/authApi';
-import { setAccessToken } from '../../lib/api';
+import { setAccessToken } from '../../lib/token';
 
 /**
  * 앱이 처음 로드될 때 쿠키를 이용해 세션을 복구하는 컴포넌트
  */
 const AuthInitializer: React.FC = () => {
-  const { setAuthenticated, logout } = useAuthStore();
+  const { setAuthenticated, logout, openModal } = useAuthStore();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -22,6 +22,11 @@ const AuthInitializer: React.FC = () => {
         // 유저 정보 가져오기
         const userData = await getMyProfile();
         setAuthenticated(true, userData);
+
+        // 신규 유저인 경우 회원가입 모달 유지
+        if (response.isNewUser) {
+          openModal('signup-step1');
+        }
       } catch (error) {
         // 실패 시 세션 없음 (비로그인 상태 유지)
         console.error('Session restore failed:', error);
@@ -31,7 +36,7 @@ const AuthInitializer: React.FC = () => {
     };
 
     checkSession();
-  }, [setAuthenticated, logout]);
+  }, [setAuthenticated, logout, openModal]);
 
   return null; // UI를 렌더링하지 않음
 };

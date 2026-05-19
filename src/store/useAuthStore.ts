@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { setAccessToken } from '../lib/token';
 
 export type AuthView = 'login' | 'signup-step1' | 'signup-step2' | 'signup-success';
 
@@ -35,7 +36,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   setView: (view) => set({ currentView: view }),
   setAuthenticated: (value, user = null) => set({ isAuthenticated: value, user }),
   logout: () => {
-    // 쿠키 삭제는 백엔드 API(/auth/logout)에서 처리하도록 함
+    // 쿠키 삭제는 백엔드 API(/auth/logout)에서 처리하도록 하고, 프론트에서는 토큰 및 상태 초기화
+    setAccessToken(null);
     set({ isAuthenticated: false, isModalOpen: false, user: null });
   },
 }));
