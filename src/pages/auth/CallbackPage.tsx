@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { reissueToken } from '../../lib/authApi';
+import { reissueToken, getMyProfile } from '../../lib/authApi';
 import { setAccessToken } from '../../lib/token';
 
 const CallbackPage: React.FC = () => {
@@ -17,8 +17,11 @@ const CallbackPage: React.FC = () => {
         // 액세스 토큰 저장
         setAccessToken(response.accessToken);
         
+        // 프로필 정보 가져오기
+        const userProfile = await getMyProfile();
+
         // 로그인 상태 업데이트
-        setAuthenticated(true);
+        setAuthenticated(true, userProfile);
 
         if (response.isNewUser) {
           // 최초 로그인인 경우 회원가입 모달(약관 동의 단계) 표시

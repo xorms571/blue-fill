@@ -30,10 +30,13 @@ const SignupStep2View: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // 1. 프로필 업데이트 (이미지는 현재 base64 문자열 그대로 보냄, 필요시 S3 업로드 로직으로 대체 가능)
+      // 서버의 imageUrl 컬럼이 255자로 제한되어 있고, /presigned-url API가 아직 미구현 상태입니다.
+      // base64 문자열을 그대로 보내면 500 에러가 발생하므로, 임시로 더미 URL을 사용합니다.
+      const tempImageUrl = imagePreview ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${nickname}` : null;
+
       await updateProfile({
         nickname,
-        profileImageUrl: imagePreview
+        profileImageUrl: tempImageUrl
       });
 
       // 2. 업데이트된 유저 정보 다시 가져오기
