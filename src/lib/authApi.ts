@@ -1,6 +1,7 @@
 import type { User } from '../store/useAuthStore';
 import { api } from './api';
 import { BASE_URL } from './config';
+import { getAccessToken, getPublicIdFromToken } from './token';
 
 export const SOCIAL_LOGIN_URLS = {
   google: `${BASE_URL}/oauth2/authorization/google`,
@@ -26,7 +27,13 @@ export const reissueToken = async () => {
  * 내 프로필 정보 조회
  */
 export const getMyProfile = async () => {
-  const response = await api.get<{ data: User }>('/users/me');
+  const token = getAccessToken();
+  if (!token) throw new Error("No access token found");
+  
+  const publicId = getPublicIdFromToken(token);
+  if (!publicId) throw new Error("Failed to extract publicId from token");
+
+  const response = await api.get<{ data: User }>(`/users/${publicId}`);
   return response.data;
 };
 
@@ -47,6 +54,20 @@ export const getDevToken = async () => {
 /**
  * 회원 탈퇴
  */
-export const withdrawUser = async () => {
-  return api.delete('/user/me');
+export const withdrawUser = async (data?: { deleteReason?: string }) => {
+  return api.delete('/users/me', { data });
+};
+
+/**
+ * 구독 플랜 변경
+ */
+export const updateSubscriptionPlan = async (subscriptionPlan: string) => {
+  return api.patch('/users/me/plan', { subscriptionPlan });
+};
+
+/**
+ * 내 프로필 공개 여부 변경
+ */
+export const updateProfileVisibility = async (isPublic: boolean) => {
+  return api.patch('/users/me/visibility', { isPublic });
 };

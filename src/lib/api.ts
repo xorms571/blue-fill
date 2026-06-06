@@ -47,20 +47,7 @@ const attemptTokenReissue = async (): Promise<string | null> => {
 
 export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
   const { data, ...rest } = options;
-  let targetEndpoint = endpoint;
-
-  // '/users/me' 요청인 경우 토큰에서 ID를 추출하여 치환
-  if (endpoint === '/users/me' || endpoint.startsWith('/users/me/')) {
-    const token = getAccessToken();
-    if (token) {
-      const publicId = getPublicIdFromToken(token);
-      if (publicId) {
-        targetEndpoint = endpoint.replace('/users/me', `/users/${publicId}`);
-      }
-    }
-  }
-
-  const url = `${BASE_URL}${targetEndpoint}`;
+  const url = `${BASE_URL}${endpoint}`;
 
   const headers = new Headers(rest.headers);
   if (data && !(data instanceof FormData)) {
