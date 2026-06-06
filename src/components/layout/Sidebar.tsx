@@ -10,12 +10,6 @@ const HomeIcon = () => (
   </svg>
 );
 
-const LibraryIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 3v18h18" /><path d="M7 17h10" /><path d="M7 13h10" /><path d="M7 9h10" />
-  </svg>
-);
-
 const ProfileIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
@@ -27,9 +21,8 @@ const Sidebar = () => {
   const location = useLocation();
   const { isAuthenticated, user, logout, openModal } = useAuthStore();
 
-  const isHome = location.pathname === '/';
-  const isLibrary = location.pathname === '/library';
-  const isProfile = location.pathname === '/profile';
+  const isHome = location.pathname === '/' || location.pathname.startsWith('/library');
+  const isProfile = location.pathname.startsWith('/profile') || location.pathname.startsWith('/users');
 
   const handleLogout = async () => {
     try {
@@ -62,16 +55,6 @@ const Sidebar = () => {
           onClick={() => navigate('/')}
         >
           <HomeIcon />
-        </button>
-
-        <button
-          className={cn(
-            "p-2 transition-colors cursor-pointer rounded-xl",
-            isLibrary ? "text-primary md:bg-primary/10" : "text-base-500 hover:text-primary"
-          )}
-          onClick={() => navigate('/library')}
-        >
-          <LibraryIcon />
         </button>
 
         {isAuthenticated ? (

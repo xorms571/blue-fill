@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# UI/UX Assets and API Docs
+src/assets/createCharacterPageUiUx/**
+src/assets/ExportBlock-1eb88514-309f-46de-a809-776cd1f2e052-Part-1/**
