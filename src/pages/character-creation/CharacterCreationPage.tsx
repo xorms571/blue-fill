@@ -11,7 +11,7 @@ const CharacterCreationPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>('setting');
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -56,8 +56,8 @@ const CharacterCreationPage = () => {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.description || !formData.prompt) {
-       alert("필수 항목을 모두 입력해주세요.");
-       return;
+      alert("필수 항목을 모두 입력해주세요.");
+      return;
     }
 
     setLoading(true);
@@ -65,12 +65,12 @@ const CharacterCreationPage = () => {
       // 서버 제약 우회 로직 (이미지가 data:image 로 시작하면 다이스베어 더미 사용)
       let finalImageUrl = formData.imageUrl;
       if (!finalImageUrl || finalImageUrl.startsWith('data:image')) {
-          finalImageUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name + Date.now()}`;
+        finalImageUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name + Date.now()}`;
       }
 
       await createCharacterCard({
-         ...formData,
-         imageUrl: finalImageUrl
+        ...formData,
+        imageUrl: finalImageUrl
       });
       alert('캐릭터 카드가 생성되었습니다!');
       navigate('/library');
@@ -83,21 +83,21 @@ const CharacterCreationPage = () => {
 
   const renderTabs = () => (
     <div className="flex gap-8 border-b border-base-900 mb-12">
-      <button 
+      <button
         className={cn("pb-4 text-body-2 font-bold transition-colors relative", currentStep === 'setting' ? "text-base-50" : "text-base-600")}
         onClick={() => setCurrentStep('setting')}
       >
         Character Setting
         {currentStep === 'setting' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-base-50"></div>}
       </button>
-      <button 
+      <button
         className={cn("pb-4 text-body-2 font-bold transition-colors relative", currentStep === 'prompt' ? "text-base-50" : "text-base-600")}
         onClick={() => setCurrentStep('prompt')}
       >
         Character Prompt
         {currentStep === 'prompt' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-base-50"></div>}
       </button>
-      <button 
+      <button
         className={cn("pb-4 text-body-2 font-bold transition-colors relative", currentStep === 'example' ? "text-base-50" : "text-base-600")}
         onClick={() => setCurrentStep('example')}
       >
@@ -123,19 +123,19 @@ const CharacterCreationPage = () => {
             <div>
               <h2 className="text-header-3 font-bold text-base-50 mb-2">Character Setting</h2>
               <p className="text-body-3 text-base-500 mb-8">Decide the appearance of your character. Feel free to express your imagination.</p>
-              
+
               <div className="space-y-4">
                 <label className="text-body-2 font-bold text-base-50">Character Image</label>
                 <p className="text-body-4 text-base-500">Upload an image. Inappropriate images may be restricted.</p>
                 <div className="flex items-center gap-6">
-                  <div 
+                  <div
                     className="w-36 h-36 bg-[#E5E5E5] rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative group"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {imagePreview ? (
-                       <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
+                      <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
                     ) : (
-                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                     )}
                   </div>
                   <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
@@ -155,12 +155,12 @@ const CharacterCreationPage = () => {
                 <label className="text-body-2 font-bold text-base-50">Character Name</label>
                 <p className="text-body-4 text-base-500">Please enter within 2-30 characters.</p>
                 <div className="relative">
-                   <input 
-                     name="name" value={formData.name} onChange={handleChange} maxLength={30}
-                     placeholder="This is how your character will be called."
-                     className="w-full bg-transparent border border-base-800 rounded-lg px-4 py-3 text-sm text-base-50 focus:border-base-500 outline-none transition-colors"
-                   />
-                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-base-600">{formData.name.length}/30</span>
+                  <input
+                    name="name" value={formData.name} onChange={handleChange} maxLength={30}
+                    placeholder="This is how your character will be called."
+                    className="w-full bg-transparent border border-base-800 rounded-lg px-4 py-3 text-sm text-base-50 focus:border-base-500 outline-none transition-colors"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-base-600">{formData.name.length}/30</span>
                 </div>
               </div>
 
@@ -168,12 +168,12 @@ const CharacterCreationPage = () => {
                 <label className="text-body-2 font-bold text-base-50">Character Description</label>
                 <p className="text-body-4 text-base-500">Please enter within 30 characters.</p>
                 <div className="relative">
-                   <input 
-                     name="description" value={formData.description} onChange={handleChange} maxLength={30}
-                     placeholder="Enter a brief description to introduce the character."
-                     className="w-full bg-transparent border border-base-800 rounded-lg px-4 py-3 text-sm text-base-50 focus:border-base-500 outline-none transition-colors"
-                   />
-                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-base-600">{formData.description.length}/30</span>
+                  <input
+                    name="description" value={formData.description} onChange={handleChange} maxLength={30}
+                    placeholder="Enter a brief description to introduce the character."
+                    className="w-full bg-transparent border border-base-800 rounded-lg px-4 py-3 text-sm text-base-50 focus:border-base-500 outline-none transition-colors"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-base-600">{formData.description.length}/30</span>
                 </div>
               </div>
             </div>
@@ -194,14 +194,14 @@ const CharacterCreationPage = () => {
                 <label className="text-body-2 font-bold text-base-50">Character's personality</label>
                 <p className="text-body-4 text-base-500">Please describe the character's personality, speech style, and appearance to be reflected in the dialogue.</p>
                 <div className="relative">
-                  <textarea 
+                  <textarea
                     name="prompt" value={formData.prompt} onChange={handleChange} maxLength={2000} rows={15}
                     placeholder="- **캐릭터 개요**\n  - 이름:\n  - 나이:\n..."
                     className="w-full bg-transparent border border-base-800 rounded-xl p-4 text-sm text-base-50 focus:border-base-500 outline-none transition-colors resize-none font-mono"
                   />
                   <div className="absolute bottom-4 right-4 flex flex-col items-end gap-2">
-                     <span className="text-[10px] text-base-600">{formData.prompt.length}/2000</span>
-                     <button className="px-3 py-1.5 rounded border border-[#134e4a] text-primary text-[11px] font-bold bg-[#042f2e]/50 hover:bg-[#042f2e] transition-colors">자동 완성</button>
+                    <span className="text-[10px] text-base-600">{formData.prompt.length}/2000</span>
+                    <button className="px-3 py-1.5 rounded border border-[#134e4a] text-primary text-[11px] font-bold bg-[#042f2e]/50 hover:bg-[#042f2e] transition-colors">자동 완성</button>
                   </div>
                 </div>
               </div>
@@ -226,7 +226,7 @@ const CharacterCreationPage = () => {
                     <label className="text-body-2 font-bold text-base-50">Post describing</label>
                     <p className="text-body-4 text-base-500">Write a post describing what kind of content you'd like to share through your character.</p>
                     <div className="relative">
-                      <textarea 
+                      <textarea
                         readOnly value={dialogue} rows={4}
                         className="w-full bg-transparent border border-base-800 rounded-xl p-4 text-sm text-base-50 focus:border-base-500 outline-none transition-colors resize-none"
                       />
@@ -240,7 +240,7 @@ const CharacterCreationPage = () => {
                     <label className="text-body-2 font-bold text-base-50">Post describing</label>
                     <p className="text-body-4 text-base-500">Write a post describing what kind of content you'd like to share through your character.</p>
                     <div className="relative">
-                      <textarea 
+                      <textarea
                         value={exampleInput} onChange={(e) => setExampleInput(e.target.value)} maxLength={1000} rows={4}
                         placeholder="Enter example dialogue here..."
                         className="w-full bg-transparent border border-base-800 rounded-xl p-4 text-sm text-base-50 focus:border-base-500 outline-none transition-colors resize-none"
@@ -248,15 +248,15 @@ const CharacterCreationPage = () => {
                       <span className="absolute bottom-4 right-4 text-[10px] text-base-600">{exampleInput.length}/1000</span>
                     </div>
                     <button onClick={handleAddExample} className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-[#134e4a] text-primary text-[11px] font-bold bg-transparent hover:bg-[#042f2e]/50 transition-colors">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                       Add
                     </button>
                   </div>
                 )}
 
                 <div className="flex items-center gap-2 px-4 py-3 bg-base-900/50 rounded-lg text-base-500 text-[11px]">
-                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                   Violence, hate, or sexual content may result in permanent restrictions.
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                  Violence, hate, or sexual content may result in permanent restrictions.
                 </div>
               </div>
             </div>
@@ -271,23 +271,23 @@ const CharacterCreationPage = () => {
 
       {/* Right Preview Area */}
       <div className="hidden lg:block w-[360px] shrink-0 pt-16">
-         <div className="sticky top-24 space-y-6">
-            <h3 className="text-header-4 font-bold text-base-50">Preview</h3>
-            <div className="bg-base-950 border border-base-900 rounded-3xl p-6 shadow-2xl">
-               <div className="aspect-square w-full rounded-2xl bg-base-900 mb-6 overflow-hidden">
-                 {imagePreview ? (
-                    <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
-                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-base-700">No Image</div>
-                 )}
-               </div>
-               <h4 className="text-[20px] font-bold text-base-50 mb-4">{formData.name || 'Character Name'}</h4>
-               <div className="border-t border-base-800 pt-4 space-y-2">
-                 <span className="text-[12px] font-bold text-base-400">Description</span>
-                 <p className="text-[13px] text-base-300 leading-relaxed min-h-[40px]">{formData.description || 'Brief description will appear here.'}</p>
-               </div>
+        <div className="sticky top-24 space-y-6">
+          <h3 className="text-header-4 font-bold text-base-50">Preview</h3>
+          <div className="bg-base-950 border border-base-900 rounded-3xl p-6 shadow-2xl">
+            <div className="aspect-square w-full rounded-2xl bg-base-900 mb-6 overflow-hidden">
+              {imagePreview ? (
+                <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-base-700">No Image</div>
+              )}
             </div>
-         </div>
+            <h4 className="text-[20px] font-bold text-base-50 mb-4">{formData.name || 'Character Name'}</h4>
+            <div className="border-t border-base-800 pt-4 space-y-2">
+              <span className="text-[12px] font-bold text-base-400">Description</span>
+              <p className="text-[13px] text-base-300 leading-relaxed min-h-[40px]">{formData.description || 'Brief description will appear here.'}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </PageLayout>
   );

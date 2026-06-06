@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import InstagramPostCard from '../../components/common/InstagramPostCard';
-import { api } from '../../lib/api';
 
 const FeedPage = () => {
   const [posts, setPosts] = useState<any[]>([]);

@@ -1,5 +1,5 @@
 import { useAuthStore } from '../store/useAuthStore';
-import { getAccessToken, setAccessToken, getPublicIdFromToken } from './token';
+import { getAccessToken, setAccessToken } from './token';
 import { BASE_URL } from './config';
 
 interface FetchOptions extends RequestInit {
