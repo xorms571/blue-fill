@@ -7,7 +7,7 @@ import { setAccessToken } from '../../lib/token';
  * 앱이 처음 로드될 때 쿠키를 이용해 세션을 복구하는 컴포넌트
  */
 const AuthInitializer: React.FC = () => {
-  const { setAuthenticated, logout, openModal } = useAuthStore();
+  const { setAuthenticated, setInitialized, logout, openModal } = useAuthStore();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -32,11 +32,13 @@ const AuthInitializer: React.FC = () => {
         console.error('Session restore failed:', error);
         setAccessToken(null);
         logout();
+      } finally {
+        setInitialized(true);
       }
     };
 
     checkSession();
-  }, [setAuthenticated, logout, openModal]);
+  }, [setAuthenticated, setInitialized, logout, openModal]);
 
   return null; // UI를 렌더링하지 않음
 };

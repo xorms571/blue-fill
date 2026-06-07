@@ -10,6 +10,12 @@ const HomeIcon = () => (
   </svg>
 );
 
+const LogIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
 const ProfileIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
@@ -22,6 +28,7 @@ const Sidebar = () => {
   const { isAuthenticated, user, logout, openModal } = useAuthStore();
 
   const isHome = location.pathname === '/' || location.pathname.startsWith('/library');
+  const isLogRoom = location.pathname.startsWith('/log-rooms');
   const isProfile = location.pathname.startsWith('/profile') || location.pathname.startsWith('/users');
 
   const handleLogout = async () => {
@@ -55,6 +62,16 @@ const Sidebar = () => {
           onClick={() => navigate('/')}
         >
           <HomeIcon />
+        </button>
+
+        <button
+          className={cn(
+            "p-2 transition-colors cursor-pointer rounded-xl",
+            isLogRoom ? "text-primary md:bg-primary/10" : "text-base-500 hover:text-primary"
+          )}
+          onClick={() => navigate('/log-rooms')}
+        >
+          <LogIcon />
         </button>
 
         {isAuthenticated ? (
