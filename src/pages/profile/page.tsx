@@ -10,6 +10,26 @@ import { useUserCharacterCards } from '../../hooks/useUserCharacterCards';
 import { updateProfileVisibility } from '../../lib/authApi';
 import { api } from '../../lib/api';
 import ProfileEditModal from '../../components/profile/ProfileEditModal';
+import type { CharacterCard } from '../../lib/characterApi';
+
+// --- Icons ---
+const ClockIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
+const LinkIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
 
 const ProfilePage = () => {
   const { publicId: paramPublicId } = useParams();
@@ -19,6 +39,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('characters');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterCard | null>(null);
 
   const isOwner = !paramPublicId || paramPublicId === currentUser?.publicId;
   const targetPublicId = paramPublicId || currentUser?.publicId;
@@ -72,6 +93,41 @@ const ProfilePage = () => {
 
   return (
     <PageLayout className="bg-background-main">
+      {/* --- Character Detail Modal --- */}
+      {selectedCharacter && (
+        <div className="fixed inset-0 z-200 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setSelectedCharacter(null)} />
+          <div className="relative w-full max-w-md bg-base-950 border border-base-800 rounded-3xl overflow-hidden shadow-2xl">
+            <button onClick={() => setSelectedCharacter(null)} className="absolute top-4 right-4 z-10 text-base-400 hover:text-base-50 transition-colors"><CloseIcon /></button>
+            <div className="flex flex-col">
+              <div className="aspect-square w-full overflow-hidden"><img src={selectedCharacter.imageUrl} alt={selectedCharacter.name} className="w-full h-full object-cover" /></div>
+              <div className="p-8 space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-header-2 font-bold text-base-50">{selectedCharacter.name}</h2>
+                  <div className="space-y-2">
+                    <h4 className="text-caption-1 text-base-600 font-bold uppercase tracking-widest">캐릭터 설명</h4>
+                    <p className="text-body-3 text-base-400 leading-relaxed">{selectedCharacter.description}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-base-900 border border-white/5 text-primary"><LinkIcon /> <span className="text-[11px] font-bold">{selectedCharacter.creatorNickname}</span></div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-base-900 border border-white/5 text-primary"><ClockIcon /> <span className="text-[11px] font-bold">{selectedCharacter.useCount}회</span></div>
+                </div>
+                <Button
+                  variant="solid"
+                  fullWidth
+                  size="m"
+                  className="h-12 rounded-xl text-base-950 font-bold"
+                  onClick={() => navigate('/feed/new', { state: { characterId: selectedCharacter.publicId } })}
+                >
+                  게시물 만들기
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-12">
         {/* 상단 프로필 섹션 */}
         <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
@@ -144,10 +200,10 @@ const ProfilePage = () => {
           {activeTab === 'characters' ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-12">
               {characters.map((char) => (
-                <article key={char.publicId} className="group cursor-pointer">
-                  <div className="relative aspect-[4/5] mb-4 overflow-hidden rounded-[20px] bg-base-900 border border-base-800">
+                <article key={char.publicId} className="group cursor-pointer" onClick={() => setSelectedCharacter(char)}>
+                  <div className="relative aspect-4/5 mb-4 overflow-hidden rounded-[20px] bg-base-900 border border-base-800">
                     <img src={char.imageUrl} alt={char.name} className="size-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 scale-105 group-hover:scale-100" />
-                    <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 border border-white/10"><span className="text-[10px] font-bold">{char.useCount}</span></div>
+                    <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 border border-white/10"><ClockIcon /><span className="text-[10px] font-bold">{char.useCount}</span></div>
                   </div>
                   <div className="space-y-1.5">
                     <h3 className="text-header-4 font-bold text-base-50">{char.name}</h3>

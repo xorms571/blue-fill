@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
+import PageHeader from '../../components/common/PageHeader';
 import InstagramPostCard from '../../components/common/InstagramPostCard';
+import { useNavigate } from 'react-router-dom';
 
 const FeedPage = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,31 +40,22 @@ const FeedPage = () => {
 
     setPosts(mockPosts);
     setLoading(false);
-
-    /* 
-    const fetchFeed = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get('/feed'); // 예상되는 API 경로
-        setPosts(response.data);
-      } catch (err) {
-        console.error('Failed to fetch feed:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFeed();
-    */
   }, []);
 
   return (
-    <PageLayout containerClassName="max-w-xl mx-auto">
-      <header className="mb-12 space-y-2">
-        <h1 className="text-header-1 font-bold text-base-50">Log Feed</h1>
-        <p className="text-body-3 text-base-500">다른 사람들의 일상 로그를 탐색해보세요.</p>
-      </header>
+    <PageLayout>
+      <PageHeader
+        category="FEED"
+        title="Log Feed"
+        description="다른 사람들의 일상 로그를 탐색해보세요."
+        action={{
+          label: "게시물 만들기",
+          onClick: () => navigate('/feed/new'),
+          icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        }}
+      />
 
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-wrap gap-12">
         {posts.map((post) => (
           <InstagramPostCard
             key={post.id}
@@ -73,7 +67,7 @@ const FeedPage = () => {
         ))}
 
         {loading && <div className="text-center py-20 text-base-500">Loading feed...</div>}
-        
+
         {!loading && posts.length === 0 && (
           <div className="py-40 text-center text-base-600">
             <p>공유된 로그가 아직 없습니다.</p>

@@ -5,6 +5,7 @@ import Button from '../../components/common/Button';
 import SearchBar from '../../components/common/SearchBar';
 import { getMyLogRooms } from '../../lib/logRoomApi';
 import type { LogRoomListItem } from '../../lib/logRoomApi';
+import PageHeader from '../../components/common/PageHeader';
 
 const SkeletonCard = () => (
   <div className="bg-base-950/20 border border-base-900/30 rounded-4xl p-8 h-80 animate-pulse">
@@ -67,30 +68,21 @@ const LogRoomListPage = () => {
 
   return (
     <PageLayout>
-      <header className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-            <span className="text-caption-1 text-primary font-bold tracking-[0.3em] uppercase">Your Universe</span>
-          </div>
-          <h1 className="text-display-2 font-bold tracking-tighter text-base-50">My Log Rooms</h1>
-          <p className="text-body-1 text-base-500 max-w-2xl leading-relaxed">
+      <PageHeader
+        category="Your Universe"
+        title="My Log Rooms"
+        description={
+          <>
             캐릭터들과 함께 쌓아가는 특별한 기록의 공간입니다.<br />
             매일의 대화와 추억이 이곳에 로그로 남습니다.
-          </p>
-        </div>
-        <div className="shrink-0">
-          <Button
-            variant="solid"
-            size="l"
-            className="rounded-2xl px-8 font-bold shadow-[0_10px_30px_-10px_rgba(98,246,181,0.3)] hover:scale-102 transition-transform"
-            onClick={() => navigate('/log-rooms/new')}
-            leftIcon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>}
-          >
-            새 로그방 만들기
-          </Button>
-        </div>
-      </header>
+          </>
+        }
+        action={{
+          label: "새 로그방 만들기",
+          onClick: () => navigate('/log-rooms/new'),
+          icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        }}
+      />
 
       <div className="mb-12 flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="w-full sm:w-96">

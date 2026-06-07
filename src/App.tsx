@@ -8,6 +8,8 @@ import LogRoomListPage from './pages/log-rooms/LogRoomListPage';
 import LogRoomPage from './pages/log-rooms/LogRoomPage';
 import ChatRoomPage from './pages/log-rooms/ChatRoomPage';
 import LogRoomCreationPage from './pages/log-rooms/LogRoomCreationPage';
+import FeedPage from './pages/feed/FeedPage';
+import PostCreationPage from './pages/feed/PostCreationPage';
 import AuthModal from './components/auth/AuthModal';
 import AuthInitializer from './components/auth/AuthInitializer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -71,14 +73,20 @@ function App() {
           } 
         />
 
+        <Route 
+          path="/feed/new" 
+          element={
+            <ProtectedRoute>
+              <PostCreationPage />
+            </ProtectedRoute>
+          } 
+        />
+
         {/* Public routes */}
         <Route path="/users/:publicId" element={<ProfilePage />} />
         <Route path="/auth/callback" element={<CallbackPage />} />
         <Route path="/design-system" element={<DesignPage />} />
-
-        {/* 
-          <Route path="/feed" element={<FeedPage />} /> 
-        */}
+        <Route path="/feed" element={<FeedPage />} />
       </Routes>
       <AuthModal />
     </>
