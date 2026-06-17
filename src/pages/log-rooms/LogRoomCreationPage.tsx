@@ -1,9 +1,7 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 import Button from '../../components/common/Button';
-import TextInput from '../../components/common/TextInput';
-import Checkbox from '../../components/common/Checkbox';
 import { createLogRoom } from '../../lib/logRoomApi';
 import { useCharacterLibrary } from '../../hooks/useCharacterLibrary';
 import { useAuthStore } from '../../store/useAuthStore';
