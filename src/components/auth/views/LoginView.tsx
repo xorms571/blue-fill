@@ -1,5 +1,7 @@
 import React from 'react';
-import { SOCIAL_LOGIN_URLS } from '../../../lib/authApi';
+import { SOCIAL_LOGIN_URLS, getDevToken } from '../../../lib/authApi';
+import { setAccessToken } from '../../../lib/token';
+import { useAuthStore } from '../../../store/useAuthStore';
 import Button from '../../common/Button';
 
 const GoogleIcon = () => (
@@ -18,12 +20,36 @@ const DiscordIcon = () => (
 );
 
 const LoginView: React.FC = () => {
+    const { setAuthenticated, closeModal } = useAuthStore();
+
     const handleGoogleLogin = () => {
         window.location.href = SOCIAL_LOGIN_URLS.google;
     };
 
     const handleDiscordLogin = () => {
         window.location.href = SOCIAL_LOGIN_URLS.discord;
+    };
+
+    const handleDevLogin = async () => {
+        const userIdInput = prompt("개발자 모드: 로그인할 User ID를 입력하세요 (기본값: 1)", "1");
+        if (userIdInput === null) return; // 취소
+
+        const userId = parseInt(userIdInput, 10);
+        if (isNaN(userId)) {
+            alert("유효한 숫자를 입력해주세요.");
+            return;
+        }
+
+        try {
+            const { accessToken } = await getDevToken(userId);
+            setAccessToken(accessToken);
+            setAuthenticated(true);
+            closeModal();
+            window.location.reload(); // 프로필 정보를 다시 불러오기 위해 새로고침
+        } catch (error) {
+            console.error("개발용 토큰 발급 실패:", error);
+            alert("토큰 발급에 실패했습니다. 서버 상태를 확인해주세요.");
+        }
     };
 
     return (
@@ -54,6 +80,18 @@ const LoginView: React.FC = () => {
                 >
                     디스코드 계정으로 로그인
                 </Button>
+                
+                {/* 개발 환경에서만 보이는 테스트 로그인 버튼 */}
+                {import.meta.env.DEV && (
+                    <Button
+                        variant='Outline'
+                        onClick={handleDevLogin}
+                        size='l'
+                        className="mt-4 border-dashed border-primary text-primary hover:bg-primary/10"
+                    >
+                        [개발용] User ID로 로그인
+                    </Button>
+                )}
             </div>
         </div>
     );

@@ -1,44 +1,101 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 import Button from '../../components/common/Button';
 import TextInput from '../../components/common/TextInput';
 import Checkbox from '../../components/common/Checkbox';
-import SearchBar from '../../components/common/SearchBar';
 import { createLogRoom } from '../../lib/logRoomApi';
 import { useCharacterLibrary } from '../../hooks/useCharacterLibrary';
+import { useAuthStore } from '../../store/useAuthStore';
 import { cn } from '../../lib/utils';
+import SearchBar from '../../components/common/SearchBar';
+import PageHeader from '../../components/common/PageHeader';
+
+// --- Character Selection Modal Component ---
+const CharacterSelectModal = ({
+  isOpen,
+  onClose,
+  onSelect
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (id: string) => void;
+}) => {
+  const { characters, loading } = useCharacterLibrary(40);
+  const [search, setSearch] = useState('');
+
+  const filtered = useMemo(() =>
+    characters.filter(c => c.name.toLowerCase().includes(search.toLowerCase())),
+    [characters, search]
+  );
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-base-950 border border-base-800 rounded-3xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden shadow-2xl">
+        <div className="p-6 border-b border-base-900 flex items-center justify-between">
+          <h2 className="text-header-3 font-bold text-base-50">캐릭터 선택</h2>
+          <button onClick={onClose} className="p-2 text-base-500 hover:text-white transition-colors">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div className="p-6 border-b border-base-900">
+          <SearchBar
+            variant="dark"
+            placeholder="캐릭터 이름 검색..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClear={() => setSearch('')}
+          />
+        </div>
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-base-950/50">
+          {loading ? (
+            <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+              {filtered.map(char => (
+                <div
+                  key={char.publicId}
+                  onClick={() => { onSelect(char.publicId); onClose(); }}
+                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer border-2 border-base-900 hover:border-primary transition-colors"
+                >
+                  <img src={char.imageUrl} alt={char.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent opacity-80" />
+                  <div className="absolute inset-0 p-3 flex flex-col justify-end">
+                    <span className="text-[12px] font-bold text-white truncate">{char.name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const LogRoomCreationPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [name, setName] = useState('');
   const [relationship, setRelationship] = useState('');
-  const [isPublic, setIsPublic] = useState(true);
+  const [isPublic, setIsPublic] = useState(false); // Default false based on UI
+  const [participantCount, setParticipantCount] = useState(2); // Default 2
+
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { characters, loading: loadingCharacters } = useCharacterLibrary(40);
-
+  const { characters } = useCharacterLibrary(40);
   const selectedCharacter = useMemo(() =>
     characters.find(c => c.publicId === selectedCharacterId),
     [characters, selectedCharacterId]
   );
 
-  const filteredCharacters = useMemo(() =>
-    characters.filter(c => c.name.toLowerCase().includes(searchKeyword.toLowerCase())),
-    [characters, searchKeyword]
-  );
-
-  const handleToggleCharacter = (id: string) => {
-    setSelectedCharacterId(id === selectedCharacterId ? null : id);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!name || !selectedCharacterId) return;
-
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       const response = await createLogRoom({
         name,
@@ -51,231 +108,207 @@ const LogRoomCreationPage = () => {
       console.error('Failed to create log room:', err);
       alert('로그방 생성에 실패했습니다.');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <PageLayout containerClassName="max-w-6xl mx-auto flex gap-16">
-      {/* Left Content Area: Form */}
-      <div className="flex-1 max-w-2xl">
-        <header className="mb-12 space-y-2">
-          <div className="flex items-center gap-2 mb-2">
-            <button
-              onClick={() => navigate('/log-rooms')}
-              className="p-2 -ml-2 text-base-500 hover:text-primary transition-colors"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-            </button>
-            <span className="text-[10px] text-primary font-bold uppercase tracking-[0.4em]">LOG ROOMS</span>
-          </div>
-          <h1 className="text-display-2 font-bold text-base-50 tracking-tight">Create Log Room</h1>
-          <p className="text-body-2 text-base-500 max-w-lg leading-relaxed">
-            캐릭터들과 함께할 새로운 공간을 설정해주세요. <br />
-            이곳에서 나누는 대화는 모두 일상의 기록이 됩니다.
-          </p>
-        </header>
+    <PageLayout containerClassName="max-w-full p-0 h-[calc(100vh-80px)] overflow-hidden">
+      <PageHeader title='로그방 생성' category='Vlog' />
 
-        <form onSubmit={handleSubmit} className="space-y-16">
-          {/* Section 01: Basic Info */}
-          <section className="space-y-8">
-            <div className="flex items-center gap-4">
-              <h2 className="text-header-3 font-bold text-base-50 uppercase tracking-widest">01 Basic Info</h2>
-              <div className="h-px flex-1 bg-linear-to-r from-base-800 to-transparent"></div>
-            </div>
+      <div className='flex'>
+        {/* Left Sidebar - Form */}
+        <div className="w-100 shrink-0 border-r border-base-900 bg-background-main flex flex-col h-full overflow-y-auto custom-scrollbar">
+          <div className="p-10 flex-1">
 
-            <div className="space-y-8 bg-base-950/40 p-10 rounded-4xl border border-base-900/50 shadow-2xl">
-              <TextInput
-                label="로그방 이름"
-                placeholder="예: 닌자들의 아지트, 우리들의 일상"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={30}
-                required
-              />
-              <TextInput
-                label="관계 설정"
-                placeholder="예: 친구, 동료, 연인 등 (자유롭게 입력)"
-                value={relationship}
-                onChange={(e) => setRelationship(e.target.value)}
-                maxLength={50}
-              />
-              <div className="pt-2">
-                <Checkbox
-                  label="공개 로그방으로 설정 (다른 유저가 구경 가능)"
-                  checked={isPublic}
-                  onChange={setIsPublic}
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Section 02: Character Selection */}
-          <section className="space-y-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-1">
-                <h2 className="text-header-3 font-bold text-base-50 uppercase tracking-widest">02 Characters</h2>
-                <div className="h-px flex-1 bg-linear-to-r from-base-800 to-transparent"></div>
-              </div>
-              <span className="ml-4 text-caption-1 text-base-600 font-bold uppercase tracking-widest">
-                {selectedCharacterId ? '1' : '0'} / 1 SELECTED
-              </span>
-            </div>
-
-            <div className="space-y-6">
-              <div className="w-full">
-                <SearchBar
-                  variant="dark"
-                  placeholder="캐릭터 이름으로 검색"
-                  value={searchKeyword}
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  onClear={() => setSearchKeyword('')}
-                />
+            <div className="space-y-12">
+              {/* 로그방 이름 */}
+              <div>
+                <label className="block text-body-2 font-bold text-base-50 mb-2">로그방 이름</label>
+                <p className="text-[12px] text-base-600 mb-4">2~30자 이내로 입력해 주세요 (특수문자, 이모지 제외)</p>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="ex 동물 친구들"
+                    value={name}
+                    onChange={(e) => setName(e.target.value.slice(0, 30))}
+                    className="w-full bg-transparent border border-base-800 rounded-xl px-4 py-3.5 text-sm text-base-50 focus:border-primary focus:outline-hidden transition-colors"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-base-600 font-mono">
+                    {name.length}/30
+                  </span>
+                </div>
               </div>
 
-              <div className="bg-base-950/40 p-8 rounded-4xl border border-base-900/50 min-h-100">
-                {loadingCharacters ? (
-                  <div className="py-40 text-center flex flex-col items-center gap-4">
-                    <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                    <span className="text-body-4 text-base-600 font-bold uppercase tracking-widest">Loading Library...</span>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    {filteredCharacters.map((char) => (
-                      <div
-                        key={char.publicId}
-                        onClick={() => handleToggleCharacter(char.publicId)}
-                        className={cn(
-                          "relative aspect-3/4 rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer group",
-                          selectedCharacterId === char.publicId
-                            ? "border-primary shadow-[0_0_30px_rgba(98,246,181,0.2)] scale-102"
-                            : "border-base-900 hover:border-base-700"
-                        )}
-                      >
-                        <img src={char.imageUrl} alt={char.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-4">
-                          <span className="text-[11px] font-bold text-white truncate">{char.name}</span>
-                          <span className="text-[9px] text-base-400 font-medium truncate opacity-60 group-hover:opacity-100 transition-opacity">{char.description}</span>
-                        </div>
-                        {selectedCharacterId === char.publicId && (
-                          <div className="absolute top-3 right-3 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-background-main shadow-xl animate-in zoom-in-50 duration-300">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-
-                    {filteredCharacters.length === 0 && (
-                      <div className="col-span-full py-20 text-center border-2 border-dashed border-base-900/50 rounded-2xl bg-base-950/20">
-                        <p className="text-body-3 text-base-600 font-bold uppercase tracking-widest">No Characters Found</p>
-                        <Button
-                          variant="Outline"
-                          size="s"
-                          className="mt-6 rounded-xl"
-                          onClick={() => navigate('/library/new')}
-                        >
-                          + CREATE NEW CHARACTER
-                        </Button>
-                      </div>
+              {/* 공개 여부 */}
+              <div>
+                <label className="block text-body-2 font-bold text-base-50 mb-4">공개 여부</label>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-base-400">로그방 {isPublic ? '공개' : '비공개'}</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsPublic(!isPublic)}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                      isPublic ? "bg-primary" : "bg-base-800"
                     )}
-                  </div>
-                )}
+                  >
+                    <span className={cn(
+                      "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                      isPublic ? "translate-x-6" : "translate-x-1"
+                    )} />
+                  </button>
+                </div>
+              </div>
+
+              {/* 초대하기 */}
+              <div>
+                <label className="block text-body-2 font-bold text-base-50 mb-2">초대하기</label>
+                <p className="text-[12px] text-base-600 mb-4 leading-relaxed">
+                  로그방은 최대 4명까지 가능합니다.<br />
+                  관계를 설정하지 않을시 친한 친구가 기본설정입니다.
+                </p>
+                <div className="flex gap-4">
+                  {[2, 3, 4].map(num => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setParticipantCount(num)}
+                      className={cn(
+                        "w-16 h-12 rounded-xl border flex items-center justify-center text-sm font-bold transition-all",
+                        participantCount === num
+                          ? "border-primary text-primary bg-primary/5"
+                          : "border-base-800 text-base-400 hover:border-base-600"
+                      )}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </section>
-
-          <div className="pt-8 flex gap-4">
-            <Button
-              variant="Darkoutline"
-              size="l"
-              className="flex-1 rounded-2xl h-14"
-              onClick={() => navigate('/log-rooms')}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="solid"
-              size="l"
-              className="flex-2 rounded-2xl h-14 font-bold shadow-lg shadow-primary/10"
-              type="submit"
-              disabled={!name || !selectedCharacterId || loading}
-              loading={loading}
-            >
-              Start Log Room
-            </Button>
-          </div>
-        </form>
-      </div>
-
-      {/* Right Content Area: Preview */}
-      <div className="hidden lg:block w-100 shrink-0">
-        <div className="sticky top-24 space-y-8">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-            <h3 className="text-caption-1 font-bold text-base-400 uppercase tracking-[0.3em]">Live Preview</h3>
           </div>
 
-          <div className="relative group">
-            {/* Background Glow */}
-            <div className="absolute -inset-4 bg-primary/5 rounded-[40px] blur-2xl group-hover:bg-primary/10 transition-colors duration-500"></div>
+          <div className="p-8 border-t border-base-900 bg-base-950/50 mt-auto">
+            <Button
+              variant={name && selectedCharacterId ? "solid" : "Darksolid"}
+              size="l"
+              className={cn(
+                "w-full rounded-2xl h-14 font-bold text-sm transition-all",
+                !name || !selectedCharacterId ? "opacity-50 cursor-not-allowed text-base-500 bg-base-800" : ""
+              )}
+              disabled={!name || !selectedCharacterId || isSubmitting}
+              loading={isSubmitting}
+              onClick={handleSubmit}
+            >
+              완료하기
+            </Button>
+          </div>
+        </div>
 
-            <div className="relative bg-base-950 border border-base-900 rounded-[40px] p-8 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] overflow-hidden">
-              <div className="flex justify-between items-start mb-8">
-                <div className="space-y-1">
-                  <h4 className="text-header-3 font-bold text-base-50 tracking-tight line-clamp-1">{name || 'Room Name'}</h4>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-base-600 font-bold uppercase">Relationship</span>
-                    <span className="text-body-4 text-primary font-semibold">{relationship || 'Undefined'}</span>
-                  </div>
-                </div>
-                <div className="w-10 h-10 rounded-2xl bg-base-900 border border-base-800 flex items-center justify-center text-base-600">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                </div>
-              </div>
+        {/* Right Canvas - Node UI */}
+        <div className="flex-1 bg-[#111214] relative overflow-hidden flex items-center justify-center">
 
-              <div className="aspect-square w-full rounded-3xl bg-base-900 mb-8 overflow-hidden border border-base-800/50">
-                {selectedCharacter ? (
-                  <img src={selectedCharacter.imageUrl} alt="preview" className="w-full h-full object-cover animate-in fade-in duration-700" />
+          {/* Connection Lines & Dots */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl flex items-center justify-between px-10 pointer-events-none">
+            <div className="h-0.5 bg-primary w-full origin-left transform scale-x-100 transition-transform duration-1000"></div>
+          </div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl flex items-center justify-between px-[170px] pointer-events-none">
+            <div className="w-4 h-4 rounded-full border-[3px] border-primary bg-background-main shadow-[0_0_15px_rgba(98,246,181,0.5)] z-10"></div>
+            <div className="w-4 h-4 rounded-full border-[3px] border-primary bg-background-main shadow-[0_0_15px_rgba(98,246,181,0.5)] z-10"></div>
+            <div className="w-4 h-4 rounded-full border-[3px] border-primary bg-background-main shadow-[0_0_15px_rgba(98,246,181,0.5)] z-10"></div>
+            <div className="w-4 h-4 rounded-full border-[3px] border-primary bg-background-main shadow-[0_0_15px_rgba(98,246,181,0.5)] z-10"></div>
+          </div>
+
+          {/* Nodes Container */}
+          <div className="relative z-20 flex items-center gap-12 w-full max-w-4xl justify-center">
+
+            {/* User Node (Me) */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-[180px] h-[180px] rounded-2xl border border-base-800 bg-[#1A1B1E] flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+                {user?.profileImageUrl ? (
+                  <img src={user.profileImageUrl} alt="me" className="w-full h-full object-cover opacity-90" />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-base-800 bg-base-900/40">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                    <span className="text-[11px] font-bold uppercase tracking-widest">Select Character</span>
+                  <div className="w-16 h-16 rounded-full border border-base-700 flex items-center justify-center text-base-600 mb-4">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
                   </div>
                 )}
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-center -space-x-3">
-                  <div className="w-10 h-10 rounded-full border-2 border-base-950 bg-base-800 flex items-center justify-center text-[10px] font-bold text-base-400">ME</div>
-                  {selectedCharacter && (
-                    <div className="w-10 h-10 rounded-full border-2 border-base-950 overflow-hidden bg-base-900 animate-in slide-in-from-left-2 duration-300">
-                      <img src={selectedCharacter.imageUrl} alt="preview" className="w-full h-full object-cover" />
-                    </div>
-                  )}
+                <div className="absolute bottom-4">
+                  <div className="px-4 py-1.5 rounded-lg border border-base-700 bg-base-900/80 backdrop-blur-sm flex items-center gap-2">
+                    <span className="text-[12px] font-bold text-base-400">⊕</span>
+                    <span className="text-[12px] font-medium text-base-300">나</span>
+                  </div>
                 </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-base font-bold text-base-50">{user?.nickname || '사용자'}</span>
+                <span className="text-[11px] px-2 py-0.5 bg-base-800 text-base-400 rounded">#Code</span>
+              </div>
+            </div>
 
-                <div className="pt-6 border-t border-base-900/50 flex justify-between items-center">
-                  <div className="flex flex-col">
-                    <span className="text-[9px] text-base-600 font-bold uppercase">Visibility</span>
-                    <span className="text-body-4 text-base-400 font-bold">{isPublic ? 'Public' : 'Private'}</span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[9px] text-base-600 font-bold uppercase">Status</span>
-                    <span className="text-body-4 text-system-success font-bold">Ready to Start</span>
-                  </div>
+            {/* Relationship Node */}
+            <div className="w-[280px] -mt-10">
+              <div className="rounded-2xl border-2 border-primary bg-[#1A1B1E] p-6 shadow-[0_0_30px_rgba(98,246,181,0.1)] relative">
+                <label className="block text-[12px] font-bold text-base-50 mb-3">관계 설정</label>
+                <div className="relative">
+                  <textarea
+                    placeholder="ex 친한친구"
+                    value={relationship}
+                    onChange={(e) => setRelationship(e.target.value.slice(0, 30))}
+                    className="w-full bg-[#111214] border border-base-800 rounded-xl px-4 py-4 text-sm text-base-50 focus:border-primary focus:outline-hidden transition-colors resize-none h-24 custom-scrollbar"
+                  />
+                  <span className="absolute bottom-3 right-4 text-[10px] text-base-600 font-mono">
+                    {relationship.length}/30
+                  </span>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6">
-            <p className="text-[11px] text-primary/80 leading-relaxed font-medium">
-              💡 **Tip**: 로그방은 언제든지 비공개로 전환할 수 있습니다. <br />
-              캐릭터와의 관계 설정은 대화 스타일에 영향을 줍니다.
-            </p>
+            {/* Character Node */}
+            <div className="flex flex-col items-center gap-4">
+              {selectedCharacter ? (
+                // Selected State
+                <>
+                  <div className="w-[180px] h-[180px] rounded-2xl border-2 border-primary overflow-hidden shadow-[0_0_30px_rgba(98,246,181,0.15)] relative group cursor-pointer" onClick={() => setIsModalOpen(true)}>
+                    <img src={selectedCharacter.imageUrl} alt={selectedCharacter.name} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-sm font-bold text-white">변경하기</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-base font-bold text-base-50">{selectedCharacter.name}</span>
+                    <span className="text-[11px] px-2 py-0.5 bg-base-800 text-base-400 rounded">#Code</span>
+                    <button onClick={(e) => { e.stopPropagation(); setSelectedCharacterId(null); }} className="text-base-600 hover:text-red-400 transition-colors ml-1">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                // Empty State
+                <div
+                  className="w-[180px] h-[180px] rounded-2xl border border-base-800 bg-[#1A1B1E] hover:border-primary/50 transition-colors flex flex-col items-center justify-center shadow-2xl cursor-pointer group"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <div className="w-16 h-16 rounded-full border border-base-700 flex items-center justify-center text-base-600 mb-4 group-hover:text-primary group-hover:border-primary transition-colors">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                  </div>
+                  <div className="px-4 py-1.5 rounded-lg border border-base-700 bg-base-900 group-hover:border-primary transition-colors flex items-center gap-2">
+                    <span className="text-[12px] font-bold text-base-400 group-hover:text-primary">⊕</span>
+                    <span className="text-[12px] font-medium text-base-300 group-hover:text-primary">캐릭터 1</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       </div>
+
+      <CharacterSelectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelect={setSelectedCharacterId}
+      />
     </PageLayout>
   );
 };

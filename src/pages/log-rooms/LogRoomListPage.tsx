@@ -69,100 +69,100 @@ const LogRoomListPage = () => {
   return (
     <PageLayout>
       <PageHeader
-        category="Your Universe"
-        title="My Log Rooms"
-        description={
-          <>
-            캐릭터들과 함께 쌓아가는 특별한 기록의 공간입니다.<br />
-            매일의 대화와 추억이 이곳에 로그로 남습니다.
-          </>
-        }
+        category="Universe"
+        title="Log Rooms"
+        description="캐릭터들과 함께 쌓아가는 특별한 기록의 공간입니다."
         action={{
-          label: "새 로그방 만들기",
+          label: "New Log Room",
           onClick: () => navigate('/log-rooms/new'),
           icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         }}
       />
 
-      <div className="mb-12 flex flex-col sm:flex-row gap-4 items-center justify-between">
+      <div className="mb-12 flex flex-col sm:flex-row gap-6 items-center justify-between">
         <div className="w-full sm:w-96">
           <SearchBar
             variant="dark"
-            placeholder="로그방 이름 또는 방장 검색"
+            placeholder="Search log rooms..."
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             onClear={() => setSearchKeyword('')}
           />
         </div>
-        <div className="flex items-center gap-2 text-caption-1 text-base-600 font-bold uppercase tracking-widest">
-          <span>Total</span>
-          <span className="text-base-400 font-mono">{filteredRooms.length}</span>
-          <div className="w-1 h-1 bg-base-800 rounded-full mx-1"></div>
-          <span>Active</span>
+        <div className="flex items-center gap-4 text-caption-1 text-base-600 font-bold uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            <span>{filteredRooms.length} Total Rooms</span>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {loading && logRooms.length === 0 ? (
-          [...Array(6)].map((_, i) => <SkeletonCard key={i} />)
+          [...Array(8)].map((_, i) => <SkeletonCard key={i} />)
         ) : (
           filteredRooms.map((room) => (
             <article
               key={room.publicId}
-              className="group relative bg-base-950/40 border border-base-900/50 rounded-4xl p-8 hover:border-primary/40 hover:bg-base-950 transition-all duration-300 cursor-pointer overflow-hidden"
+              className="group relative aspect-[3/4] bg-base-900 rounded-[32px] overflow-hidden cursor-pointer border border-base-800 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(98,246,181,0.1)] transition-all duration-500"
               onClick={() => navigate(`/log-rooms/${room.publicId}`)}
             >
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+              {/* Background Image */}
+              <div className="absolute inset-0">
+                <img
+                  src={room.participants[0]?.imageUrl || '/default-room.png'}
+                  alt={room.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+              </div>
 
-              <div className="relative z-10">
-                <div className="flex justify-between items-start mb-8">
+              {/* Status Badges */}
+              <div className="absolute top-5 right-5 flex gap-2">
+                {room.isOwner && (
+                  <span className="text-[10px] px-2.5 py-1 bg-primary text-background-main rounded-full font-black uppercase tracking-tighter">Owner</span>
+                )}
+                {!room.isPublic && (
+                  <div className="w-7 h-7 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/10">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                  </div>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="absolute inset-0 p-7 flex flex-col justify-end">
+                <div className="space-y-3 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                   <div className="space-y-1">
-                    <h3 className="text-header-3 font-bold text-base-50 group-hover:text-primary transition-colors tracking-tight line-clamp-1">{room.name}</h3>
+                    <h3 className="text-header-3 font-bold text-white tracking-tight line-clamp-1 group-hover:text-primary transition-colors">
+                      {room.name}
+                    </h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-base-600 font-bold uppercase tracking-wider">Created By</span>
-                      <span className="text-body-4 text-base-400 font-semibold">{room.ownerNickname}</span>
-                    </div>
-                  </div>
-                  {room.isOwner && (
-                    <span className="text-[9px] px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-bold uppercase tracking-tighter">Owner</span>
-                  )}
-                </div>
-
-                <div className="flex items-center mb-10">
-                  <div className="flex items-center -space-x-4">
-                    {room.participantImages.slice(0, 4).map((img, idx) => (
-                      <div key={idx} className="w-12 h-12 rounded-2xl border-4 border-base-950 overflow-hidden bg-base-900 shadow-xl transform group-hover:scale-105 transition-transform" style={{ transitionDelay: `${idx * 50}ms` }}>
-                        <img src={img} alt="participant" className="w-full h-full object-cover" />
+                      <span className="text-[10px] text-base-400 font-bold uppercase tracking-wider">With</span>
+                      <div className="flex -space-x-2">
+                        {room.participants.slice(0, 3).map((p, idx) => (
+                          <div key={idx} className="w-5 h-5 rounded-full border border-black overflow-hidden bg-base-800">
+                            <img src={p.imageUrl || '/default-avatar.png'} alt="participant" className="w-full h-full object-cover" />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                    {room.participantCount > 4 && (
-                      <div className="w-12 h-12 rounded-2xl border-4 border-base-950 bg-base-800 flex items-center justify-center text-[11px] font-bold text-base-400 shadow-xl z-10">
-                        +{room.participantCount - 4}
-                      </div>
-                    )}
-                  </div>
-                  <div className="ml-4 flex flex-col">
-                    <span className="text-[10px] text-base-600 font-bold uppercase tracking-tight">{room.participantCount} Participants</span>
-                    <div className="flex gap-1 mt-1">
-                      {[...Array(Math.min(room.participantCount, 5))].map((_, i) => (
-                        <div key={i} className="w-1 h-1 bg-primary/40 rounded-full"></div>
-                      ))}
+                      <span className="text-[11px] text-primary/80 font-bold">+{room.participantCount}</span>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between pt-6 border-t border-base-900/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-base-900 flex items-center justify-center text-base-600">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-system-success"></div>
+                      <span className="text-[10px] text-base-400 font-bold uppercase tracking-widest">Active</span>
                     </div>
-                    <span className="text-[11px] text-base-500 font-bold">Live Updates</span>
+                    <span className="text-[10px] text-base-500 font-mono">
+                      {new Date(room.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-base-700 font-mono font-medium">
-                    {new Date(room.createdAt).toLocaleDateString()}
-                  </span>
                 </div>
               </div>
+
+              {/* Hover Interaction Overlay */}
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
             </article>
           ))
         )}

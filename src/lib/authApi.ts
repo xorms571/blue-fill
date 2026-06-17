@@ -24,6 +24,14 @@ export const reissueToken = async () => {
 };
 
 /**
+ * 특정 유저 프로필 정보 조회
+ */
+export const getUserProfile = async (publicId: string) => {
+  const response = await api.get<{ data: User }>(`/users/${publicId}`);
+  return response.data;
+};
+
+/**
  * 내 프로필 정보 조회
  */
 export const getMyProfile = async () => {
@@ -46,16 +54,19 @@ export const updateProfile = async (data: { nickname: string; profileImageUrl?: 
 
 /**
  * [테스트용] 액세스 토큰 발급
+ * @param userId 미전달 시 백엔드 기본값(1) 사용
  */
-export const getDevToken = async () => {
-  return api.post('/dev/token');
+export const getDevToken = async (userId?: number) => {
+  const query = userId !== undefined ? `?userId=${userId}` : '';
+  const response = await api.post<{ data: { accessToken: string } }>(`/dev/token${query}`);
+  return response.data;
 };
 
 /**
  * 회원 탈퇴
  */
 export const withdrawUser = async (data?: { deleteReason?: string }) => {
-  return api.delete('/users/me', { data });
+  return api.delete('/user/me', { data });
 };
 
 /**

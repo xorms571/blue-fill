@@ -1,14 +1,20 @@
 import { api } from './api';
 
+export interface LogRoomParticipant {
+  memberPublicId: string;
+  imageUrl: string | null;
+}
+
 export interface LogRoomListItem {
   publicId: string;
   name: string;
   participantCount: number;
   createdAt: string;
   isOwner: boolean;
+  isPublic: boolean;
   ownerPublicId: string;
   ownerNickname: string;
-  participantImages: string[];
+  participants: LogRoomParticipant[];
 }
 
 export interface LogRoomListResponse {
@@ -51,6 +57,36 @@ export interface ChatMessage {
   sender: 'USER' | 'AI';
   message: string;
   sent_at: string;
+}
+
+export interface SharedPostPhoto {
+  memberPublicId: string;
+  photoPublicId: string;
+  caption: string | null;
+  imageUrl: string;
+  authorType: 'USER' | 'CHARACTER';
+  authorName: string;
+  authorImageUrl: string | null;
+}
+
+export interface SharedPost {
+  publicId: string;
+  postDate: string;
+  timeSlot: number;
+  sharer: {
+    publicId: string;
+    nickname: string;
+    profileImageUrl: string | null;
+  };
+  isMine: boolean;
+  createdAt: string;
+  photos: SharedPostPhoto[];
+}
+
+export interface SharedPostListResponse {
+  content: SharedPost[];
+  nextCursor: string | null;
+  hasNext: boolean;
 }
 
 /**
@@ -102,10 +138,33 @@ export const updateLogCharacterCard = async (publicId: string, memberPublicId: s
 };
 
 /**
- * 로그 공유 (피드 게시물로)
+ * 로그 게시물 공유 (피드 게시물로)
  */
 export const shareLog = async (publicId: string, data: { postDate: string; timeSlot: number }) => {
-  return api.post(`/log-rooms/${publicId}/shares`, data);
+  return api.post<{
+    data: {
+      publicId: string;
+      logRoomPublicId: string;
+      postDate: string;
+      timeSlot: number;
+      createdAt: string;
+    };
+  }>(`/log-rooms/${publicId}/posts`, data);
+};
+
+/**
+ * 로그방에서 공유된 게시물 조회
+ */
+export const getLogRoomPosts = async (
+  publicId: string,
+  params: { cursor?: string; size?: number } = {}
+) => {
+  const query = new URLSearchParams();
+  if (params.cursor) query.append('cursor', params.cursor);
+  if (params.size) query.append('size', params.size.toString());
+
+  const endpoint = `/log-rooms/${publicId}/posts${query.toString() ? `?${query.toString()}` : ''}`;
+  return api.get<{ data: SharedPostListResponse }>(endpoint);
 };
 
 /**
