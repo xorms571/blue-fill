@@ -12,6 +12,7 @@ export interface LogRoomListItem {
   createdAt: string;
   isOwner: boolean;
   isPublic: boolean;
+  backgroundPhoto: string | null;
   ownerPublicId: string;
   ownerNickname: string;
   participants: LogRoomParticipant[];
@@ -53,10 +54,10 @@ export interface LogCharacterCard {
 }
 
 export interface ChatMessage {
-  message_id: string;
-  sender: 'USER' | 'AI';
-  message: string;
-  sent_at: string;
+  publicId: string;
+  isMe: boolean;
+  content: string;
+  createdAt: string;
 }
 
 export interface SharedPostPhoto {
@@ -109,6 +110,7 @@ export const createLogRoom = async (data: {
   characterCardPublicIds: string[];
   relationship: string;
   isPublic: boolean;
+  backgroundPhoto?: string;
 }) => {
   return api.post<{ data: { publicId: string; name: string; isPublic: boolean; createdAt: string } }>(
     '/log-rooms',
@@ -203,5 +205,8 @@ export const getChatMessages = async (publicId: string, params: { cursor?: strin
  * 채팅방 메시지 전송
  */
 export const sendChatMessage = async (publicId: string, data: { message: string; photoPublicId?: string }) => {
-  return api.post(`/log-rooms/${publicId}/chats`, data);
+  return api.post(`/log-rooms/${publicId}/chats`, {
+    content: data.message,
+    quotedPhotoPublicId: data.photoPublicId
+  });
 };

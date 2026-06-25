@@ -1,11 +1,11 @@
 import type { User } from '../store/useAuthStore';
 import { api } from './api';
-import { BASE_URL } from './config';
+import { OAUTH2_BASE_URL } from './config';
 import { getAccessToken, getPublicIdFromToken } from './token';
 
 export const SOCIAL_LOGIN_URLS = {
-  google: `${BASE_URL}/oauth2/authorization/google`,
-  discord: `${BASE_URL}/oauth2/authorization/discord`,
+  google: `${OAUTH2_BASE_URL}/oauth2/authorization/google`,
+  discord: `${OAUTH2_BASE_URL}/oauth2/authorization/discord`,
 };
 
 /**

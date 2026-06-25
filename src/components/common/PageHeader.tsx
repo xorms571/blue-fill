@@ -31,37 +31,40 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   className
 }) => {
   return (
-    <header className={cn("mb-16 space-y-4", className)}>
-      {category && (
-        <span className="text-caption-1 text-base-500 font-bold tracking-[0.3em] uppercase">
-          {category}
-        </span>
-      )}
-      
-      <h1 className="text-display-2 font-bold tracking-tight text-base-50">
-        {title}
-      </h1>
-      
-      {description && (
-        <p className="text-body-2 text-base-500 max-w-3xl leading-relaxed">
-          {description}
-        </p>
-      )}
-      
-      {action && (
-        <div className="pt-2">
-          <Button
-            variant={action.variant || "solid"}
-            size="m"
-            className="rounded-full px-10 h-11 text-base-950 font-bold"
-            leftIcon={action.icon}
-            onClick={action.onClick}
-          >
-            {action.label}
-          </Button>
-        </div>
-      )}
-    </header>
+    <>
+      <header className={cn("mx-auto w-full max-w-273 py-10 md:py-16", className)}>
+        {category && (
+          <span className="text-body-4 text-base-400 tracking-[0.3em] uppercase">
+            {category}
+          </span>
+        )}
+
+        <h1 className="text-display-3 font-bold tracking-tight text-base-300 pt-4 pb-6">
+          {title}
+        </h1>
+
+        {description && (
+          <p className="text-body-4 text-base-400 max-w-2xs leading-relaxed">
+            {description}
+          </p>
+        )}
+
+        {action && (
+          <div className="pt-8">
+            <Button
+              variant={action.variant || "solid"}
+              size="m"
+              leftIcon={action.icon}
+              className='min-w-[384px] text-body-2 text-base-800 font-medium'
+              onClick={action.onClick}
+            >
+              {action.label}
+            </Button>
+          </div>
+        )}
+      </header>
+      <hr className="border-base-700" />
+    </>
   );
 };
 

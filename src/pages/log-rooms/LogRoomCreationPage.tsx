@@ -123,17 +123,17 @@ const LogRoomCreationPage = () => {
               {/* 로그방 이름 */}
               <div>
                 <label className="block text-body-2 font-bold text-base-50 mb-2">로그방 이름</label>
-                <p className="text-[12px] text-base-600 mb-4">2~30자 이내로 입력해 주세요 (특수문자, 이모지 제외)</p>
+                <p className="text-[12px] text-base-600 mb-4">0~12자 이내로 입력해 주세요 (특수문자, 이모지 제외)</p>
                 <div className="relative">
                   <input
                     type="text"
                     placeholder="ex 동물 친구들"
                     value={name}
-                    onChange={(e) => setName(e.target.value.slice(0, 30))}
+                    onChange={(e) => setName(e.target.value.slice(0, 12))}
                     className="w-full bg-transparent border border-base-800 rounded-xl px-4 py-3.5 text-sm text-base-50 focus:border-primary focus:outline-hidden transition-colors"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-base-600 font-mono">
-                    {name.length}/30
+                    {name.length}/12
                   </span>
                 </div>
               </div>

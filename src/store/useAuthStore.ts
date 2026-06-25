@@ -10,8 +10,8 @@ export interface User {
   email: string;
   planId: number | null;
   isPublic: boolean;
-  characterCnt: number;
-  postCnt: number;
+  characterCount: number;
+  postCount: number;
 }
 
 interface AuthState {

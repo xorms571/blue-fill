@@ -5,8 +5,7 @@ import CharacterCreationPage from './pages/character-creation/CharacterCreationP
 import ProfilePage from './pages/profile/page';
 import CallbackPage from './pages/auth/CallbackPage';
 import LogRoomListPage from './pages/log-rooms/LogRoomListPage';
-import LogRoomPage from './pages/log-rooms/LogRoomPage';
-import ChatRoomPage from './pages/log-rooms/ChatRoomPage';
+import { LogRoomPage } from './pages/log-rooms/LogRoomPage';
 import LogRoomCreationPage from './pages/log-rooms/LogRoomCreationPage';
 import FeedPage from './pages/feed/FeedPage';
 import PostCreationPage from './pages/feed/PostCreationPage';
@@ -22,64 +21,56 @@ function App() {
         {/* Character Library is now the home page */}
         <Route path="/" element={<CharacterLibraryPage />} />
         <Route path="/library" element={<CharacterLibraryPage />} />
-        
+
         {/* Protected routes */}
-        <Route 
-          path="/library/new" 
+        <Route
+          path="/library/new"
           element={
             <ProtectedRoute>
               <CharacterCreationPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/profile" 
+        <Route
+          path="/profile"
           element={
             <ProtectedRoute>
               <ProfilePage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/log-rooms" 
+        <Route
+          path="/log-rooms"
           element={
             <ProtectedRoute>
               <LogRoomListPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/log-rooms/new" 
+        <Route
+          path="/log-rooms/new"
           element={
             <ProtectedRoute>
               <LogRoomCreationPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/log-rooms/:publicId" 
+        <Route
+          path="/log-rooms/:publicId"
           element={
             <ProtectedRoute>
               <LogRoomPage />
             </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/log-rooms/:publicId/chats" 
-          element={
-            <ProtectedRoute>
-              <ChatRoomPage />
-            </ProtectedRoute>
-          } 
+          }
         />
 
-        <Route 
-          path="/feed/new" 
+        <Route
+          path="/feed/new"
           element={
             <ProtectedRoute>
               <PostCreationPage />
             </ProtectedRoute>
-          } 
+          }
         />
 
         {/* Public routes */}

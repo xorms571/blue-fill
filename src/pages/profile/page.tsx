@@ -156,7 +156,7 @@ const ProfilePage = () => {
               </div>
 
               <div className="flex items-center gap-4 text-base-400 typo-body-3">
-                <span>캐릭터 {profileUser.characterCardCount || 0}</span>
+                <span>캐릭터 {profileUser.characterCount || 0}</span>
                 <span>게시물 {profileUser.postCount || 0}</span>
               </div>
             </div>

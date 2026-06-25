@@ -105,7 +105,7 @@ const LogRoomListPage = () => {
             <article
               key={room.publicId}
               className="group relative aspect-[3/4] bg-base-900 rounded-[32px] overflow-hidden cursor-pointer border border-base-800 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(98,246,181,0.1)] transition-all duration-500"
-              onClick={() => navigate(`/log-rooms/${room.publicId}`)}
+              onClick={() => navigate(`/log-rooms/${room.publicId}`, { state: { roomName: room.name } })}
             >
               {/* Background Image */}
               <div className="absolute inset-0">
