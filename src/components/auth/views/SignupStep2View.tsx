@@ -3,17 +3,21 @@ import { useAuthStore } from '../../../store/useAuthStore';
 import Button from '../../common/Button';
 import TextInput from '../../common/TextInput';
 import { updateProfile, getMyProfile } from '../../../lib/authApi';
+import { useR2Upload } from '../../../hooks/useR2Upload';
 
 const SignupStep2View: React.FC = () => {
   const { setView, setAuthenticated } = useAuthStore();
   const [nickname, setNickname] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadToR2 } = useR2Upload();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -30,22 +34,26 @@ const SignupStep2View: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // 서버의 imageUrl 컬럼이 255자로 제한되어 있고, /presigned-url API가 아직 미구현 상태입니다.
-      // base64 문자열을 그대로 보내면 500 에러가 발생하므로, 임시로 더미 URL을 사용합니다.
-      const tempImageUrl = imagePreview ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${nickname}` : null;
+      let profileImageUrl = null;
 
+      // 1. 이미지가 선택된 경우 R2 업로드 수행
+      if (selectedFile) {
+        profileImageUrl = await uploadToR2(selectedFile, 'PROFILE');
+      }
+
+      // 2. 프로필 업데이트 (서버는 받은 key를 DB에 저장)
       await updateProfile({
         nickname,
-        profileImageUrl: tempImageUrl
+        profileImageUrl
       });
 
-      // 2. 업데이트된 유저 정보 다시 가져오기
+      // 3. 업데이트된 유저 정보 다시 가져오기
       const updatedUser = await getMyProfile();
       
-      // 3. 스토어 업데이트
+      // 4. 스토어 업데이트
       setAuthenticated(true, updatedUser);
 
-      // 4. 성공 화면으로 이동
+      // 5. 성공 화면으로 이동
       setView('signup-success');
     } catch (error) {
       console.error('Profile update failed:', error);

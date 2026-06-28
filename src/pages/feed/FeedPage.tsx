@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import PageLayout from '../../components/layout/PageLayout';
 import PageHeader from '../../components/common/PageHeader';
-import InstagramPostCard from '../../components/common/InstagramPostCard';
+import InstagramPostCard from '../../components/character/InstagramPostCard';
 import { useNavigate } from 'react-router-dom';
 
 const FeedPage = () => {

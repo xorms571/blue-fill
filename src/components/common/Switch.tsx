@@ -21,14 +21,14 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, className }) 
         />
         <div
           className={cn(
-            'w-9 h-5 rounded-full transition-colors duration-200 ease-in-out',
+            'w-11 h-5 rounded-full transition-colors duration-200 ease-in-out',
             checked ? 'bg-primary' : 'bg-base-700'
           )}
         />
         <div
           className={cn(
-            'absolute left-0.5 top-0.5 w-4 h-4 bg-base-50 rounded-full shadow transform transition-transform duration-200 ease-in-out',
-            checked ? 'translate-x-4' : 'translate-x-0'
+            'absolute left-0.5 top-0.5 w-4 h-4 bg-base-400 rounded-full shadow transform transition-transform duration-200 ease-in-out',
+            checked ? 'translate-x-6' : 'translate-x-0'
           )}
         />
       </div>

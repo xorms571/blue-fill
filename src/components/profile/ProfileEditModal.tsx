@@ -3,6 +3,7 @@ import Button from '../common/Button';
 import TextInput from '../common/TextInput';
 import { updateProfile } from '../../lib/authApi';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useR2Upload } from '../../hooks/useR2Upload';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -12,24 +13,27 @@ interface ProfileEditModalProps {
   onSuccess: (newNickname: string, newImageUrl: string | null) => void;
 }
 
-const ProfileEditModal: React.FC<ProfileEditModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  currentNickname, 
+const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
+  isOpen,
+  onClose,
+  currentNickname,
   currentImageUrl,
-  onSuccess 
+  onSuccess
 }) => {
   const [nickname, setNickname] = useState(currentNickname);
   const [imagePreview, setImagePreview] = useState<string | null>(currentImageUrl);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { setAuthenticated, user } = useAuthStore();
+  const { uploadToR2 } = useR2Upload();
 
   if (!isOpen) return null;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -46,11 +50,11 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
 
     setIsLoading(true);
     try {
-      // 서버의 imageUrl 제약(255자) 우회를 위한 임시 URL 생성기
-      // 새 이미지가 업로드된 경우(base64로 변경된 경우) 다이스베어 URL 생성
-      let finalImageUrl = imagePreview;
-      if (imagePreview && imagePreview.startsWith('data:image')) {
-          finalImageUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${nickname + Date.now()}`;
+      let finalImageUrl = currentImageUrl;
+
+      // 새 파일이 선택된 경우에만 R2 업로드 수행
+      if (selectedFile) {
+        finalImageUrl = await uploadToR2(selectedFile, 'PROFILE');
       }
 
       await updateProfile({
@@ -58,11 +62,13 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
         profileImageUrl: finalImageUrl
       });
 
+      console.log('서버로 보낼 이미지 키:', finalImageUrl);
+
       // 전역 스토어 업데이트
       if (user) {
-         setAuthenticated(true, { ...user, nickname, profileImageUrl: finalImageUrl });
+        setAuthenticated(true, { ...user, nickname, profileImageUrl: finalImageUrl });
       }
-      
+
       onSuccess(nickname, finalImageUrl);
       onClose();
     } catch (error: any) {
@@ -91,7 +97,7 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               <span className="text-4xl text-base-500 font-bold">{nickname.charAt(0).toUpperCase()}</span>
             )}
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
             </div>
           </div>
           <input
@@ -101,11 +107,11 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             accept="image/*"
             className="hidden"
           />
-          <button 
-             onClick={() => setImagePreview(null)}
-             className="text-[12px] text-base-500 hover:text-red-400 transition-colors underline"
+          <button
+            onClick={() => { setImagePreview(null); setSelectedFile(null); }}
+            className="text-[12px] text-base-500 hover:text-red-400 transition-colors underline"
           >
-             기본 이미지로 변경
+            기본 이미지로 변경
           </button>
         </div>
 

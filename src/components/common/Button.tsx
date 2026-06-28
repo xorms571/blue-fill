@@ -19,6 +19,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   children?: React.ReactNode;
+  iconSize?: ButtonSize; // 아이콘 전용 사이즈 (SVG 크기 강제 제어)
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -33,6 +34,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     children,
     disabled,
     type = 'button',
+    iconSize = 'l',
     ...props
   }, ref) => {
 
@@ -98,13 +100,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           <>
             {leftIcon && (
-              <span className={cn('shrink-0 flex items-center justify-center', iconSizeClasses[size])}>
+              <span className={cn('shrink-0 flex items-center justify-center', iconSizeClasses[iconSize])}>
                 {leftIcon}
               </span>
             )}
             {children}
             {rightIcon && (
-              <span className={cn('shrink-0 flex items-center justify-center', iconSizeClasses[size])}>
+              <span className={cn('shrink-0 flex items-center justify-center', iconSizeClasses[iconSize])}>
                 {rightIcon}
               </span>
             )}

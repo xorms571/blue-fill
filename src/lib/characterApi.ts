@@ -45,7 +45,7 @@ export interface CharacterCardUpdateRequest {
  * 캐릭터 카드 생성
  */
 export const createCharacterCard = async (data: CharacterCardCreateRequest) => {
-  return api.post<{ data: { publicId: string; name: string; description: string; imageUrl: string; createdAt: string } }>(
+  return api.post<{ publicId: string; name: string; description: string; imageUrl: string; createdAt: string }>(
     '/character-cards',
     data
   );
@@ -67,14 +67,14 @@ export const getCharacterLibrary = async (params: {
   if (params.size) query.append('size', params.size.toString());
 
   const endpoint = `/character-cards${query.toString() ? `?${query.toString()}` : ''}`;
-  return api.get<{ data: CharacterCardListResponse }>(endpoint);
+  return api.get<CharacterCardListResponse>(endpoint);
 };
 
 /**
  * 캐릭터 카드 상세 정보 조회
  */
 export const getCharacterCardDetail = async (publicId: string) => {
-  return api.get<{ data: CharacterCard }>(`/character-cards/${publicId}`);
+  return api.get<CharacterCard>(`/character-cards/${publicId}`);
 };
 
 /**
@@ -110,5 +110,5 @@ export const getUserCharacterCards = async (
   if (params.size) query.append('size', params.size.toString());
 
   const endpoint = `/users/${userPublicId}/character-cards${query.toString() ? `?${query.toString()}` : ''}`;
-  return api.get<{ data: CharacterCardListResponse }>(endpoint);
+  return api.get<CharacterCardListResponse>(endpoint);
 };

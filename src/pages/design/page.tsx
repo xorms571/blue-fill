@@ -4,11 +4,11 @@ import Chip from '../../components/common/Chip';
 import Checkbox from '../../components/common/Checkbox';
 import Tabs from '../../components/common/Tabs';
 import Dropdown from '../../components/common/Dropdown';
-import CharacterProfileItem from '../../components/common/CharacterProfileItem';
-import InstagramPostCard from '../../components/common/InstagramPostCard';
+import InstagramPostCard from '../../components/character/InstagramPostCard';
 import SearchBar from '../../components/common/SearchBar';
 import PageLayout from '../../components/layout/PageLayout';
 import { useAuthStore } from '../../store/useAuthStore';
+import CharacterProfileItem from '../../components/character/CharacterProfileItem';
 
 // --- Icons ---
 const PlusIcon = () => (

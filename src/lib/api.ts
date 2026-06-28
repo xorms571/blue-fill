@@ -92,7 +92,12 @@ export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}):
 
   if (response.status === 204) return {} as T;
 
-  return response.json();
+  const result = await response.json();
+  // 서버가 ApiResponse 형태로 응답을 래핑해서 보낸 경우, data 필드만 반환
+  if (result && result.data !== undefined) {
+      return result.data;
+  }
+  return result;
 }
 
 export const api = {

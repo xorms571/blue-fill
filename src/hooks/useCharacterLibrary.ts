@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getCharacterLibrary } from '../lib/characterApi';
-import type { CharacterCard } from '../lib/characterApi';
+import type { CharacterCard, CharacterCardListResponse } from '../lib/characterApi';
 
 export const useCharacterLibrary = (initialSize = 10) => {
   const [characters, setCharacters] = useState<CharacterCard[]>([]);
@@ -17,14 +17,14 @@ export const useCharacterLibrary = (initialSize = 10) => {
     setError(null);
     try {
       const currentCursor = isFirst ? undefined : nextCursor;
-      const response = await getCharacterLibrary({
+      const response: CharacterCardListResponse = await getCharacterLibrary({
         keyword,
         sort,
         cursor: currentCursor || undefined,
         size: initialSize,
       });
 
-      const { content, nextCursor: newCursor, hasNext: newHasNext } = response.data;
+      const { content, nextCursor: newCursor, hasNext: newHasNext } = response;
       
       if (isFirst) {
         setCharacters(content);

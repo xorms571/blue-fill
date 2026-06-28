@@ -21,10 +21,11 @@ export const useUserCharacterCards = (userPublicId: string | undefined, initialS
         size: initialSize,
       });
 
-      const { content, nextCursor: newCursor, hasNext: newHasNext } = response.data;
+      const { content, nextCursor: newCursor, hasNext: newHasNext } = response;
       
       if (isFirst) {
         setCharacters(content);
+        console.log(content);
       } else {
         setCharacters((prev) => [...prev, ...content]);
       }

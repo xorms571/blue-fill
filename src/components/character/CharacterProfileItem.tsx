@@ -1,5 +1,5 @@
-import Chip from './Chip';
 import { cn } from '../../lib/utils';
+import Chip from '../common/Chip';
 
 interface CharacterProfileItemProps {
   imageUrl: string;

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 import Button from '../../components/common/Button';
 import SearchBar from '../../components/common/SearchBar';
-import InstagramPostCard from '../../components/common/InstagramPostCard';
+import InstagramPostCard from '../../components/character/InstagramPostCard';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useUserCharacterCards } from '../../hooks/useUserCharacterCards';
 import { cn } from '../../lib/utils';

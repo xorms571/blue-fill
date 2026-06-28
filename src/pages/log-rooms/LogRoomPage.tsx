@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import * as logRoomApi from '../../lib/logRoomApi';
 import PageLayout from '../../components/layout/PageLayout';
+import { useR2Upload } from '../../hooks/useR2Upload';
 
 export const LogRoomPage = () => {
     const { publicId } = useParams<{ publicId: string }>();
@@ -12,6 +13,7 @@ export const LogRoomPage = () => {
     const [replyPhotoId, setReplyPhotoId] = useState<string | null>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { uploadToR2 } = useR2Upload();
 
     // Auto-scroll
     useEffect(() => {
@@ -46,17 +48,17 @@ export const LogRoomPage = () => {
 
         const caption = window.prompt("로그 캡션을 입력하세요 (최대 30자):") || "새로운 로그";
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const base64Image = reader.result as string;
+        try {
+            // R2로 업로드 후 key 반환
+            const imageUrl = await uploadToR2(file, 'LOG');
 
-            // Mock: Create a new log entry
+            // Mock: Create a new log entry (Update to use real API once available)
             const newEntry: logRoomApi.DayLogEntry = {
                 photoPublicId: Date.now().toString(),
-                memberPublicId: 'me', // Added dummy ID
+                memberPublicId: 'me',
                 authorName: '나',
                 authorImageUrl: '/default-profile.png',
-                imageUrl: base64Image,
+                imageUrl: imageUrl, // 서버에서 조회 가능한 URL 혹은 key
                 caption: caption,
                 authorType: 'USER'
             };
@@ -75,8 +77,10 @@ export const LogRoomPage = () => {
                 }
                 return newData;
             });
-        };
-        reader.readAsDataURL(file);
+        } catch (error) {
+            console.error('Failed to upload log image', error);
+            alert('로그 업로드에 실패했습니다.');
+        }
     };
 
     // Send message

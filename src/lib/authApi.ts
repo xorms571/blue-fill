@@ -19,16 +19,14 @@ export const logout = async () => {
  * 토큰 재발급
  */
 export const reissueToken = async () => {
-  const response = await api.post<{ data: { accessToken: string; isNewUser: boolean } }>('/auth/reissue');
-  return response.data;
+  return await api.post<{ accessToken: string; isNewUser: boolean }>('/auth/reissue');
 };
 
 /**
  * 특정 유저 프로필 정보 조회
  */
 export const getUserProfile = async (publicId: string) => {
-  const response = await api.get<{ data: User }>(`/users/${publicId}`);
-  return response.data;
+  return await api.get<User>(`/users/${publicId}`);
 };
 
 /**
@@ -41,8 +39,7 @@ export const getMyProfile = async () => {
   const publicId = getPublicIdFromToken(token);
   if (!publicId) throw new Error("Failed to extract publicId from token");
 
-  const response = await api.get<{ data: User }>(`/users/${publicId}`);
-  return response.data;
+  return await api.get<User>(`/users/${publicId}`);
 };
 
 /**
@@ -58,8 +55,7 @@ export const updateProfile = async (data: { nickname: string; profileImageUrl?: 
  */
 export const getDevToken = async (userId?: number) => {
   const query = userId !== undefined ? `?userId=${userId}` : '';
-  const response = await api.post<{ data: { accessToken: string } }>(`/dev/token${query}`);
-  return response.data;
+  return await api.post<{ accessToken: string }>(`/dev/token${query}`);
 };
 
 /**
