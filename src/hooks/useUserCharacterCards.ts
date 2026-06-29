@@ -11,7 +11,7 @@ export const useUserCharacterCards = (userPublicId: string | undefined, initialS
 
   const fetchCharacters = useCallback(async (isFirst = true) => {
     if (!userPublicId || userPublicId === 'undefined') return; // undefined 체크 강화
-    
+
     setLoading(true);
     setError(null);
     try {
@@ -22,14 +22,14 @@ export const useUserCharacterCards = (userPublicId: string | undefined, initialS
       });
 
       const { content, nextCursor: newCursor, hasNext: newHasNext } = response;
-      
+
       if (isFirst) {
         setCharacters(content);
         console.log(content);
       } else {
         setCharacters((prev) => [...prev, ...content]);
       }
-      
+
       setNextCursor(newCursor);
       setHasNext(newHasNext);
     } catch (err: any) {

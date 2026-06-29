@@ -1,17 +1,16 @@
 import { Routes, Route } from 'react-router-dom';
 import DesignPage from './pages/design/page';
 import CharacterLibraryPage from './pages/library/page';
-import CharacterCreationPage from './pages/character-creation/CharacterCreationPage';
 import ProfilePage from './pages/profile/page';
 import CallbackPage from './pages/auth/CallbackPage';
 import LogRoomListPage from './pages/log-rooms/LogRoomListPage';
 import { LogRoomPage } from './pages/log-rooms/LogRoomPage';
 import LogRoomCreationPage from './pages/log-rooms/LogRoomCreationPage';
-import FeedPage from './pages/feed/FeedPage';
-import PostCreationPage from './pages/feed/PostCreationPage';
 import AuthModal from './components/auth/AuthModal';
 import AuthInitializer from './components/auth/AuthInitializer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import CharacterCreationPage from './pages/character/create/CharacterCreationPage';
+import CharacterEditPage from './pages/character/edit/CharacterEditPage';
 
 function App() {
   return (
@@ -28,6 +27,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CharacterCreationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/library/edit/:publicId"
+          element={
+            <ProtectedRoute>
+              <CharacterEditPage />
             </ProtectedRoute>
           }
         />
@@ -64,20 +71,10 @@ function App() {
           }
         />
 
-        <Route
-          path="/feed/new"
-          element={
-            <ProtectedRoute>
-              <PostCreationPage />
-            </ProtectedRoute>
-          }
-        />
-
         {/* Public routes */}
         <Route path="/users/:publicId" element={<ProfilePage />} />
         <Route path="/auth/callback" element={<CallbackPage />} />
         <Route path="/design-system" element={<DesignPage />} />
-        <Route path="/feed" element={<FeedPage />} />
       </Routes>
       <AuthModal />
     </>

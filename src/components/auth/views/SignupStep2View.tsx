@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useAuthStore } from '../../../store/useAuthStore';
 import Button from '../../common/Button';
 import TextInput from '../../common/TextInput';
+import { ImageUpload } from '../../common/ImageUpload';
 import { updateProfile, getMyProfile } from '../../../lib/authApi';
 import { useR2Upload } from '../../../hooks/useR2Upload';
 
@@ -11,19 +12,15 @@ const SignupStep2View: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadToR2 } = useR2Upload();
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageChange = (file: File) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async () => {
@@ -49,7 +46,7 @@ const SignupStep2View: React.FC = () => {
 
       // 3. 업데이트된 유저 정보 다시 가져오기
       const updatedUser = await getMyProfile();
-      
+
       // 4. 스토어 업데이트
       setAuthenticated(true, updatedUser);
 
@@ -80,32 +77,12 @@ const SignupStep2View: React.FC = () => {
         <p className="text-[18px] font-bold text-base-50 mb-8">프로필 사진과 닉네임을 등록하세요.</p>
 
         {/* 프로필 이미지 업로드 */}
-        <div className="flex items-center gap-6 mb-8">
-          <div
-            className="w-24 h-24 rounded-2xl border border-primary flex items-center justify-center cursor-pointer overflow-hidden bg-base-950 hover:bg-base-900 transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {imagePreview ? (
-              <img src={imagePreview} alt="Profile Preview" className="w-full h-full object-cover" />
-            ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 5V19M5 12H19" stroke="#62F6B5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-          </div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageChange}
-            accept="image/*"
-            className="hidden"
-          />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="typo-body-4 border border-base-800 rounded-md px-4 py-2 hover:bg-base-900 text-base-200 transition-colors"
-          >
-            이미지 업로드하기
-          </button>
+        <div className="mb-8">
+            <ImageUpload 
+                imagePreview={imagePreview} 
+                onFileChange={handleImageChange} 
+                defaultLabel="이미지 업로드하기"
+            />
         </div>
 
         {/* 닉네임 입력 */}

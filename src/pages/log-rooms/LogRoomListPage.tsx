@@ -6,6 +6,7 @@ import SearchBar from '../../components/common/SearchBar';
 import { getMyLogRooms } from '../../lib/logRoomApi';
 import type { LogRoomListItem } from '../../lib/logRoomApi';
 import PageHeader from '../../components/common/PageHeader';
+import { PlusIcon } from '../../components/icons/PlusIcon';
 
 const SkeletonCard = () => (
   <div className="bg-base-950/20 border border-base-900/30 rounded-4xl p-8 h-80 animate-pulse">
@@ -69,13 +70,13 @@ const LogRoomListPage = () => {
   return (
     <PageLayout>
       <PageHeader
-        category="Universe"
-        title="Log Rooms"
+        category="Vlog"
+        title="로그방"
         description="캐릭터들과 함께 쌓아가는 특별한 기록의 공간입니다."
         action={{
-          label: "New Log Room",
+          label: "로그방 만들기",
           onClick: () => navigate('/log-rooms/new'),
-          icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          icon: <PlusIcon />,
         }}
       />
 

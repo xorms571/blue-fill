@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 import Button from '../../components/common/Button';
 import { createLogRoom } from '../../lib/logRoomApi';
 import { useCharacterLibrary } from '../../hooks/useCharacterLibrary';
 import { useAuthStore } from '../../store/useAuthStore';
-import { cn } from '../../lib/utils';
+import { cn, getImageUrl } from '../../lib/utils';
 import SearchBar from '../../components/common/SearchBar';
 import PageHeader from '../../components/common/PageHeader';
 
@@ -75,13 +75,15 @@ const CharacterSelectModal = ({
 
 const LogRoomCreationPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { characterId, isPublic: initialIsPublic } = (location.state as { characterId?: string; isPublic?: boolean }) || {};
   const { user } = useAuthStore();
   const [name, setName] = useState('');
   const [relationship, setRelationship] = useState('');
-  const [isPublic, setIsPublic] = useState(false); // Default false based on UI
+  const [isPublic, setIsPublic] = useState(initialIsPublic ?? false); // Default false based on UI
   const [participantCount, setParticipantCount] = useState(2); // Default 2
 
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(characterId || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -223,7 +225,7 @@ const LogRoomCreationPage = () => {
 
             {/* User Node (Me) */}
             <div className="flex flex-col items-center gap-4">
-              <div className="w-[180px] h-[180px] rounded-2xl border border-base-800 bg-[#1A1B1E] flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+              <div className="w-45 h-45 rounded-2xl border border-base-800 bg-[#1A1B1E] flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
                 {user?.profileImageUrl ? (
                   <img src={user.profileImageUrl} alt="me" className="w-full h-full object-cover opacity-90" />
                 ) : (
@@ -245,7 +247,7 @@ const LogRoomCreationPage = () => {
             </div>
 
             {/* Relationship Node */}
-            <div className="w-[280px] -mt-10">
+            <div className="w-70 -mt-10">
               <div className="rounded-2xl border-2 border-primary bg-[#1A1B1E] p-6 shadow-[0_0_30px_rgba(98,246,181,0.1)] relative">
                 <label className="block text-[12px] font-bold text-base-50 mb-3">관계 설정</label>
                 <div className="relative">
@@ -267,15 +269,15 @@ const LogRoomCreationPage = () => {
               {selectedCharacter ? (
                 // Selected State
                 <>
-                  <div className="w-[180px] h-[180px] rounded-2xl border-2 border-primary overflow-hidden shadow-[0_0_30px_rgba(98,246,181,0.15)] relative group cursor-pointer" onClick={() => setIsModalOpen(true)}>
-                    <img src={selectedCharacter.imageUrl} alt={selectedCharacter.name} className="w-full h-full object-cover" />
+                  <div className="w-45 h-45 rounded-2xl border-2 border-primary overflow-hidden shadow-[0_0_30px_rgba(98,246,181,0.15)] relative group cursor-pointer" onClick={() => setIsModalOpen(true)}>
+                    <img src={getImageUrl(selectedCharacter.imageUrl) || ''} alt={selectedCharacter.name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-sm font-bold text-white">변경하기</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-base font-bold text-base-50">{selectedCharacter.name}</span>
-                    <span className="text-[11px] px-2 py-0.5 bg-base-800 text-base-400 rounded">#Code</span>
+                    <span className="text-[11px] px-2 py-0.5 bg-base-800 text-base-400 rounded">#{selectedCharacter.characterCode}</span>
                     <button onClick={(e) => { e.stopPropagation(); setSelectedCharacterId(null); }} className="text-base-600 hover:text-red-400 transition-colors ml-1">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     </button>
@@ -284,7 +286,7 @@ const LogRoomCreationPage = () => {
               ) : (
                 // Empty State
                 <div
-                  className="w-[180px] h-[180px] rounded-2xl border border-base-800 bg-[#1A1B1E] hover:border-primary/50 transition-colors flex flex-col items-center justify-center shadow-2xl cursor-pointer group"
+                  className="w-45 h-45 rounded-2xl border border-base-800 bg-[#1A1B1E] hover:border-primary/50 transition-colors flex flex-col items-center justify-center shadow-2xl cursor-pointer group"
                   onClick={() => setIsModalOpen(true)}
                 >
                   <div className="w-16 h-16 rounded-full border border-base-700 flex items-center justify-center text-base-600 mb-4 group-hover:text-primary group-hover:border-primary transition-colors">

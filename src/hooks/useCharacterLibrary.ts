@@ -8,7 +8,7 @@ export const useCharacterLibrary = (initialSize = 10) => {
   const [error, setError] = useState<string | null>(null);
   const [hasNext, setHasNext] = useState(true);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
-  
+
   const [keyword, setKeyword] = useState('');
   const [sort, setSort] = useState<'LATEST' | 'POPULAR'>('LATEST');
 
@@ -25,13 +25,15 @@ export const useCharacterLibrary = (initialSize = 10) => {
       });
 
       const { content, nextCursor: newCursor, hasNext: newHasNext } = response;
-      
+      console.log(response);
+
+
       if (isFirst) {
         setCharacters(content);
       } else {
         setCharacters((prev) => [...prev, ...content]);
       }
-      
+
       setNextCursor(newCursor);
       setHasNext(newHasNext);
     } catch (err: any) {

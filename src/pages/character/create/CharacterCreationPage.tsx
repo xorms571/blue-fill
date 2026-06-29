@@ -1,14 +1,14 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PageLayout from '../../components/layout/PageLayout';
-import Button from '../../components/common/Button';
-import { createCharacterCard } from '../../lib/characterApi';
-import { cn } from '../../lib/utils';
-import { useR2Upload } from '../../hooks/useR2Upload';
-import Tabs from '../../components/common/Tabs';
-import TextInput from '../../components/common/TextInput';
-import { TrashIcon } from '../../assets/icons/TrashIcon';
-import { EditIcon } from '../../assets/icons/EditIcon';
+import PageLayout from '../../../components/layout/PageLayout';
+import Button from '../../../components/common/Button';
+import { createCharacterCard } from '../../../lib/characterApi';
+import { cn } from '../../../lib/utils';
+import { useR2Upload } from '../../../hooks/useR2Upload';
+import Tabs from '../../../components/common/Tabs';
+import TextInput from '../../../components/common/TextInput';
+import { TrashIcon } from '../../../components/icons/TrashIcon';
+import { EditIcon } from '../../../components/icons/EditIcon';
 
 type Step = 'setting' | 'prompt' | 'example';
 
@@ -109,7 +109,7 @@ const CharacterCreationPage = () => {
   return (
     <PageLayout containerClassName="mx-auto flex justify-between md:py-0 md:px-6 md:h-screen">
       {/* Left Content Area */}
-      <div className="flex flex-col justify-between max-w-2xl w-full">
+      <div className="flex flex-col justify-between [@media(width>=1200px)]:max-w-2xl w-full">
         <div className='mt-13 flex flex-col justify-between h-full mb-10'>
           <header className="mb-8 space-y-2">
             <span className="text-body-4 text-base-500 font-bold uppercase tracking-widest">캐릭터 생성</span>
@@ -220,14 +220,14 @@ const CharacterCreationPage = () => {
                   </p>
 
                   {/* 2. 예시 대화 목록 (위로 이동, 스크롤바 추가) */}
-                  <ul className="space-y-6 max-h-80 overflow-y-auto pr-2">
+                  <ul className="space-y-6 h-64 overflow-y-auto pr-2">
                     {formData.exampleDialogues.map((dialogue, index) => (
                       <li key={index} className="flex gap-3 items-start group">
                         {/* 캐릭터 프로필 사진 (임시 URL, 교체 필요) */}
                         <img
                           src={imagePreview || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
                           alt="profile"
-                          className="w-10 h-10 rounded-lg bg-base-700"
+                          className="w-10 h-10 rounded-lg object-cover bg-base-700"
                         />
 
                         <div className='flex gap-5'>
@@ -329,9 +329,9 @@ const CharacterCreationPage = () => {
           </div>
         </div>
       </div>
-      <div className="border-l border-base-700" />
+      <div className="hidden [@media(width>=1200px)]:block border-l border-base-700" />
       {/* Right Preview Area */}
-      <div className="hidden w-86.5 shrink-0 md:flex flex-col justify-center">
+      <div className="hidden w-86.5 shrink-0 [@media(width>=1200px)]:flex flex-col justify-center">
         <div>
           <h3 className="text-header-4 text-base-300">캐릭터 미리보기</h3>
           <p className="text-body-3 text-base-500 border-b border-base-700 pt-2.5 pb-3 mb-6">아래에 생성된 캐릭터를 미리 확인해 보세요!</p>

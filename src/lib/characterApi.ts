@@ -103,11 +103,13 @@ export const updateCharacterVisibility = async (publicId: string, isPublic: bool
  */
 export const getUserCharacterCards = async (
   userPublicId: string,
-  params: { cursor?: string; size?: number } = {}
+  params: { cursor?: string; size?: number; sort?: 'LATEST' | 'POPULAR', keyword?: string; } = {}
 ) => {
   const query = new URLSearchParams();
   if (params.cursor) query.append('cursor', params.cursor);
   if (params.size) query.append('size', params.size.toString());
+  if (params.sort) query.append('sort', params.sort);
+  if (params.keyword) query.append('keyword', params.keyword);
 
   const endpoint = `/users/${userPublicId}/character-cards${query.toString() ? `?${query.toString()}` : ''}`;
   return api.get<CharacterCardListResponse>(endpoint);

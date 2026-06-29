@@ -32,7 +32,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 }) => {
   return (
     <>
-      <header className={cn("mx-auto w-full max-w-273 py-10 md:py-16", className)}>
+      <header className={cn("py-10 md:py-16", className)}>
         {category && (
           <span className="text-body-4 text-base-400 tracking-[0.3em] uppercase">
             {category}

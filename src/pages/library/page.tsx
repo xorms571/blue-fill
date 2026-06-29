@@ -9,8 +9,11 @@ import { useCharacterLibrary } from '../../hooks/useCharacterLibrary';
 import type { CharacterCard } from '../../lib/characterApi';
 import PageHeader from '../../components/common/PageHeader';
 import CharacterCardComponent from '../../components/character/CharacterCard';
-import { PlusIcon } from '../../assets/icons/PlusIcon';
+import { PlusIcon } from '../../components/icons/PlusIcon';
 import { CharacterInfoModal } from '../../components/character/CharacterInfoModal';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useDeleteCharacter } from '../../hooks/useDeleteCharacter';
+import { LibrarySection } from '../../components/common/LibrarySection';
 
 const CharacterLibraryPage = () => {
   const navigate = useNavigate();
@@ -22,11 +25,14 @@ const CharacterLibraryPage = () => {
     setKeyword,
     sort,
     setSort,
-    loadMore
+    loadMore,
+    refresh,
   } = useCharacterLibrary();
 
   const [isFABOpen, setIsFABOpen] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterCard | null>(null);
+  const { user: currentUser } = useAuthStore();
+  const { deleteCharacter } = useDeleteCharacter();
 
   const sortOptions = [
     { label: '최신순', value: 'LATEST' },
@@ -43,7 +49,7 @@ const CharacterLibraryPage = () => {
       {/* --- Main UI --- */}
       <PageHeader
         category="LIBRARY"
-        title="Character Library"
+        title="Characters"
         description="BLUEPILL에서 만들어진 모든 캐릭터를 탐색하고, 나만의 캐릭터 제작을 위한 영감을 얻어보세요."
         action={{
           label: "캐릭터 생성하기",
@@ -52,28 +58,26 @@ const CharacterLibraryPage = () => {
         }}
       />
 
-      <section className="flex items-center justify-end gap-3 my-6 mx-auto max-w-273 w-full">
-        <Dropdown
-          options={sortOptions}
-          value={sort}
-          onChange={(val) => setSort(val as 'LATEST' | 'POPULAR')}
-          className="w-41"
-        />
-        <div className="w-55">
-          <SearchBar
-            variant="dark"
-            placeholder="Search"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onClear={() => setKeyword('')}
-            className='w-full'
-          />
-        </div>
-      </section>
+      <LibrarySection
+        title="라이브러리"
+        count={characters.length}
+        sortOptions={sortOptions}
+        sort={sort}
+        onSortChange={(val) => setSort(val as 'LATEST' | 'POPULAR')}
+        keyword={keyword}
+        onKeywordChange={setKeyword}
+        onClearKeyword={() => setKeyword('')}
+      />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-7 gap-y-8 max-w-273 mx-auto w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-7 gap-y-8">
         {characters.map((char) => (
-          <CharacterCardComponent key={char.publicId} char={char} onClick={() => setSelectedCharacter(char)} />
+          <CharacterCardComponent
+            key={char.publicId}
+            isOwner={currentUser?.publicId === char.creatorPublicId}
+            char={char}
+            onClick={() => setSelectedCharacter(char)}
+            onEdit={() => navigate(`/library/edit/${char.publicId}`)}
+            onDelete={() => deleteCharacter(char.publicId, refresh)} />
         ))}
       </div>
 

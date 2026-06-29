@@ -5,6 +5,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import Button from '../../components/common/Button';
 import Switch from '../../components/common/Switch';
 import { useUserCharacterCards } from '../../hooks/useUserCharacterCards';
+import { useDeleteCharacter } from '../../hooks/useDeleteCharacter';
 import { updateProfileVisibility } from '../../lib/authApi';
 import { api } from '../../lib/api';
 import ProfileEditModal from '../../components/profile/ProfileEditModal';
@@ -13,7 +14,8 @@ import { getCharacterCardDetail } from '../../lib/characterApi';
 import CharacterCardComponent from '../../components/character/CharacterCard';
 import { getImageUrl } from '../../lib/utils';
 import { CharacterInfoModal } from '../../components/character/CharacterInfoModal';
-import { SettingIcon } from '../../assets/icons/SettingIcon';
+import { SettingIcon } from '../../components/icons/SettingIcon';
+import { LibrarySection } from '../../components/common/LibrarySection';
 
 const ProfilePage = () => {
   const { publicId: paramPublicId } = useParams();
@@ -28,6 +30,8 @@ const ProfilePage = () => {
   const targetPublicId = paramPublicId || currentUser?.publicId;
 
   const { characters, loading: charsLoading } = useUserCharacterCards(targetPublicId);
+  const { deleteCharacter } = useDeleteCharacter();
+  const { refresh } = useUserCharacterCards(targetPublicId);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -77,14 +81,20 @@ const ProfilePage = () => {
     }));
   };
 
+
   if (loading) return <PageLayout>Loading...</PageLayout>;
   if (!profileUser) return <PageLayout>User not found</PageLayout>;
 
   // 닉네임 첫 글자 (아바타용)
   const firstLetter = profileUser.nickname ? profileUser.nickname.charAt(0).toUpperCase() : '?';
 
+  const sortOptions = [
+    { label: '최신순', value: 'LATEST' },
+    { label: '인기순', value: 'POPULAR' },
+  ];
+
   return (
-    <PageLayout className="bg-background-main">
+    <PageLayout>
       {/* --- Character Detail Modal --- */}
       {selectedCharacter && (
         <CharacterInfoModal character={selectedCharacter} onClose={() => setSelectedCharacter(null)} />
@@ -92,7 +102,7 @@ const ProfilePage = () => {
 
       <div className="flex flex-col gap-12">
         {/* 상단 프로필 섹션 */}
-        <section className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+        <section className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pt-16">
           <div className="flex items-center gap-8">
             {/* 아바타 */}
             <div className="w-24 h-24 md:w-35 md:h-35 rounded-full border border-base-400 flex items-center justify-center bg-background-main text-display-2 font-bold text-base-400">
@@ -134,15 +144,21 @@ const ProfilePage = () => {
         </section>
 
         {/* 탭 메뉴 */}
-        <section className="border-t border-base-700 pt-10.75">
-          <div className='flex items-center text-body-1 font-bold gap-2'><h3 className='text-base-300'>내 캐릭터</h3><div className='border-l border-base-700 h-4.5' /><span className='text-base-500'>{characters.length}</span></div>
+        <section className="border-t border-base-700">
+          <LibrarySection
+            title='내 캐릭터'
+            count={characters.length}
+          />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-12">
             {characters.map((char) => (
-              <CharacterCardComponent 
-                key={char.publicId} 
-                char={char} 
+              <CharacterCardComponent
+                key={char.publicId}
+                char={char}
                 creatorNickname={profileUser.nickname}
-                onClick={() => handleCharacterClick(char)} 
+                isOwner={isOwner}
+                onEdit={() => navigate(`/library/edit/${char.publicId}`)}
+                onDelete={() => deleteCharacter(char.publicId, refresh)}
+                onClick={() => handleCharacterClick(char)}
               />
             ))}
             {characters.length === 0 && !charsLoading && (

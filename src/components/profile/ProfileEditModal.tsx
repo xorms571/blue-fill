@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Button from '../common/Button';
 import TextInput from '../common/TextInput';
 import { updateProfile } from '../../lib/authApi';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useR2Upload } from '../../hooks/useR2Upload';
+import { Modal } from '../common/Modal';
+import { ImageUpload, type ImageUploadHandle } from '../common/ImageUpload';
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -24,22 +26,19 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
   const [imagePreview, setImagePreview] = useState<string | null>(currentImageUrl);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageUploadRef = useRef<ImageUploadHandle>(null);
   const { setAuthenticated, user } = useAuthStore();
   const { uploadToR2 } = useR2Upload();
 
   if (!isOpen) return null;
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageChange = (file: File) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async () => {
@@ -80,59 +79,49 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-base-950 border border-base-800 rounded-3xl overflow-hidden shadow-2xl p-8">
-        <h2 className="text-header-3 font-bold text-base-50 mb-6">프로필 수정</h2>
-
+    <Modal isOpen={isOpen} onClose={onClose} title="프로필 수정" width='lg'>
+      <div className='p-8 space-y-8'>
         {/* 프로필 이미지 업로드 */}
-        <div className="flex flex-col items-center gap-4 mb-8">
-          <div
-            className="w-32 h-32 rounded-full border border-base-800 flex items-center justify-center cursor-pointer overflow-hidden bg-base-900 hover:border-primary transition-colors relative group"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {imagePreview ? (
-              <img src={imagePreview} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-4xl text-base-500 font-bold">{nickname.charAt(0).toUpperCase()}</span>
-            )}
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
-            </div>
-          </div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageChange}
-            accept="image/*"
-            className="hidden"
+        <div className="flex flex-col gap-4">
+          <ImageUpload
+            ref={imageUploadRef}
+            imagePreview={imagePreview}
+            onFileChange={handleImageChange}
+            defaultLabel='나를 대표하는 이미지를 업로드해 주세요'
+            boxSize='l'
+            actions={[
+              {
+                label: '수정',
+                onClick: () => imageUploadRef.current?.triggerUpload(),
+              },
+              {
+                label: '삭제',
+                onClick: () => {
+                  setImagePreview(null);
+                  setSelectedFile(null);
+                },
+              }
+            ]}
           />
-          <button
-            onClick={() => { setImagePreview(null); setSelectedFile(null); }}
-            className="text-[12px] text-base-500 hover:text-red-400 transition-colors underline"
-          >
-            기본 이미지로 변경
-          </button>
         </div>
 
         {/* 닉네임 입력 */}
-        <div className="mb-8">
-          <TextInput
-            label="닉네임"
-            placeholder="닉네임을 입력하세요"
-            maxLength={12}
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
-        </div>
+        <TextInput
+          label="닉네임"
+          placeholder="닉네임을 입력하세요"
+          helperText='12자 이내로 입력해 주세요'
+          maxLength={12}
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+        />
 
         {/* 버튼 */}
         <div className="flex gap-3">
-          <Button variant="Darkoutline" fullWidth onClick={onClose}>취소</Button>
-          <Button variant="solid" fullWidth onClick={handleSubmit} loading={isLoading}>저장</Button>
+          <Button variant="Outline" fullWidth onClick={onClose}>취소</Button>
+          <Button variant="solid" fullWidth onClick={handleSubmit} loading={isLoading}>등록</Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 
