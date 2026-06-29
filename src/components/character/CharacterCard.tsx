@@ -9,6 +9,7 @@ interface CharacterCardProps {
   char: CharacterCard;
   onClick?: () => void;
   className?: string;
+  creatorNickname?: string;
 }
 
 const getImageUrl = (key: string | null) => {
@@ -17,7 +18,7 @@ const getImageUrl = (key: string | null) => {
   return `${R2_DOMAIN}/${key}`;
 };
 
-const CharacterCardComponent: React.FC<CharacterCardProps> = ({ char, onClick, className }) => {
+const CharacterCardComponent: React.FC<CharacterCardProps> = ({ char, onClick, className, creatorNickname }) => {
   return (
     <article key={char.publicId} className={cn("group cursor-pointer", className)} onClick={onClick}>
       <div className="relative aspect-square mb-3 overflow-hidden rounded-2xl bg-base-900">
@@ -27,7 +28,7 @@ const CharacterCardComponent: React.FC<CharacterCardProps> = ({ char, onClick, c
       <div>
         <h3 className="text-body-2 font-semibold text-base-300">{char.name} <Chip variant='gray' size='s'>#{char.characterCode}</Chip></h3>
         <div className="text-body-4 my-1 text-base-500 line-clamp-2">{char.description}</div>
-        <Chip variant='gray' size='s' icon={<UserIcon />}>{char.creatorNickname}</Chip>
+        <Chip variant='gray' size='s' icon={<UserIcon />}>{creatorNickname || char.creatorNickname}</Chip>
       </div>
     </article>
   );

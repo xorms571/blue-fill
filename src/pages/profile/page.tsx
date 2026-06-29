@@ -9,6 +9,7 @@ import { updateProfileVisibility } from '../../lib/authApi';
 import { api } from '../../lib/api';
 import ProfileEditModal from '../../components/profile/ProfileEditModal';
 import type { CharacterCard } from '../../lib/characterApi';
+import { getCharacterCardDetail } from '../../lib/characterApi';
 import CharacterCardComponent from '../../components/character/CharacterCard';
 import { getImageUrl } from '../../lib/utils';
 import { CharacterInfoModal } from '../../components/character/CharacterInfoModal';
@@ -40,12 +41,24 @@ const ProfilePage = () => {
         console.error('Failed to fetch profile:', err);
       } finally {
         setLoading(false);
-        console.log(profileUser);
       }
     };
 
     fetchProfile();
   }, [targetPublicId]);
+
+  const handleCharacterClick = async (char: CharacterCard) => {
+    if (char.prompt !== undefined) {
+      setSelectedCharacter(char);
+    } else {
+      try {
+        const fullChar = await getCharacterCardDetail(char.publicId);
+        setSelectedCharacter(fullChar);
+      } catch (err) {
+        console.error('Failed to fetch character detail:', err);
+      }
+    }
+  };
 
   const handleVisibilityChange = async (checked: boolean) => {
     try {
@@ -125,7 +138,12 @@ const ProfilePage = () => {
           <div className='flex items-center text-body-1 font-bold gap-2'><h3 className='text-base-300'>내 캐릭터</h3><div className='border-l border-base-700 h-4.5' /><span className='text-base-500'>{characters.length}</span></div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-12">
             {characters.map((char) => (
-              <CharacterCardComponent key={char.publicId} char={char} onClick={() => setSelectedCharacter(char)} />
+              <CharacterCardComponent 
+                key={char.publicId} 
+                char={char} 
+                creatorNickname={profileUser.nickname}
+                onClick={() => handleCharacterClick(char)} 
+              />
             ))}
             {characters.length === 0 && !charsLoading && (
               <div className="col-span-full flex flex-col items-center justify-center py-20 gap-6">
