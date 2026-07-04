@@ -88,11 +88,6 @@ const ProfilePage = () => {
   // 닉네임 첫 글자 (아바타용)
   const firstLetter = profileUser.nickname ? profileUser.nickname.charAt(0).toUpperCase() : '?';
 
-  const sortOptions = [
-    { label: '최신순', value: 'LATEST' },
-    { label: '인기순', value: 'POPULAR' },
-  ];
-
   return (
     <PageLayout>
       {/* --- Character Detail Modal --- */}
