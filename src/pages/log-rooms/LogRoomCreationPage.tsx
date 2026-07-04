@@ -56,9 +56,9 @@ const CharacterSelectModal = ({
                 <div
                   key={char.publicId}
                   onClick={() => { onSelect(char.publicId); onClose(); }}
-                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer border-2 border-base-900 hover:border-primary transition-colors"
+                  className="group relative aspect-3/4 rounded-2xl overflow-hidden cursor-pointer border-2 border-base-900 hover:border-primary transition-colors"
                 >
-                  <img src={char.imageUrl} alt={char.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={getImageUrl(char.imageUrl) || ''} alt={char.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent opacity-80" />
                   <div className="absolute inset-0 p-3 flex flex-col justify-end">
                     <span className="text-[12px] font-bold text-white truncate">{char.name}</span>
@@ -103,7 +103,7 @@ const LogRoomCreationPage = () => {
         relationship,
         isPublic,
       });
-      navigate(`/log-rooms/${response.data.publicId}`);
+      navigate(`/log-rooms/${response.publicId}`);
     } catch (err) {
       console.error('Failed to create log room:', err);
       alert('로그방 생성에 실패했습니다.');
@@ -113,12 +113,13 @@ const LogRoomCreationPage = () => {
   };
 
   return (
-    <PageLayout containerClassName="max-w-full p-0 h-[calc(100vh-80px)] overflow-hidden">
-      <PageHeader title='로그방 생성' category='Vlog' />
+    <PageLayout containerClassName="max-w-full md:px-0 md:py-0 h-screen overflow-hidden" className='py-0'>
 
-      <div className='flex'>
+      <div className='flex w-full'>
         {/* Left Sidebar - Form */}
         <div className="w-100 shrink-0 border-r border-base-900 bg-background-main flex flex-col h-full overflow-y-auto custom-scrollbar">
+
+          <PageHeader title='로그방 생성' category='Vlog' className='px-10' />
           <div className="p-10 flex-1">
 
             <div className="space-y-12">

@@ -3,6 +3,8 @@ import { api } from './api';
 export interface LogRoomParticipant {
   memberPublicId: string;
   imageUrl: string | null;
+  isUser: boolean;
+  isOwner: boolean;
 }
 
 export interface LogRoomListItem {
@@ -99,7 +101,7 @@ export const getMyLogRooms = async (params: { cursor?: string; size?: number } =
   if (params.size) query.append('size', params.size.toString());
 
   const endpoint = `/log-rooms${query.toString() ? `?${query.toString()}` : ''}`;
-  return api.get<{ data: LogRoomListResponse }>(endpoint);
+  return api.get<LogRoomListResponse>(endpoint);
 };
 
 /**
@@ -112,7 +114,7 @@ export const createLogRoom = async (data: {
   isPublic: boolean;
   backgroundPhoto?: string;
 }) => {
-  return api.post<{ data: { publicId: string; name: string; isPublic: boolean; createdAt: string } }>(
+  return api.post<{ publicId: string; name: string; isPublic: boolean; createdAt: string }>(
     '/log-rooms',
     data
   );
@@ -122,14 +124,14 @@ export const createLogRoom = async (data: {
  * 하루 로그 조회
  */
 export const getDayLog = async (publicId: string, date: string) => {
-  return api.get<{ data: DayLogTimeSlot[] }>(`/log-rooms/${publicId}/logs?date=${date}`);
+  return api.get<DayLogTimeSlot[]>(`/log-rooms/${publicId}/logs?date=${date}`);
 };
 
 /**
  * 로그 캐릭터 카드 조회
  */
 export const getLogCharacterCard = async (publicId: string, memberPublicId: string) => {
-  return api.get<{ data: LogCharacterCard }>(`/log-rooms/${publicId}/members/${memberPublicId}`);
+  return api.get<LogCharacterCard>(`/log-rooms/${publicId}/members/${memberPublicId}`);
 };
 
 /**
@@ -144,13 +146,11 @@ export const updateLogCharacterCard = async (publicId: string, memberPublicId: s
  */
 export const shareLog = async (publicId: string, data: { postDate: string; timeSlot: number }) => {
   return api.post<{
-    data: {
       publicId: string;
       logRoomPublicId: string;
       postDate: string;
       timeSlot: number;
       createdAt: string;
-    };
   }>(`/log-rooms/${publicId}/posts`, data);
 };
 
@@ -166,7 +166,7 @@ export const getLogRoomPosts = async (
   if (params.size) query.append('size', params.size.toString());
 
   const endpoint = `/log-rooms/${publicId}/posts${query.toString() ? `?${query.toString()}` : ''}`;
-  return api.get<{ data: SharedPostListResponse }>(endpoint);
+  return api.get<SharedPostListResponse>(endpoint);
 };
 
 /**
@@ -198,7 +198,7 @@ export const getChatMessages = async (publicId: string, params: { cursor?: strin
   if (params.limit) query.append('limit', params.limit.toString());
 
   const endpoint = `/log-rooms/${publicId}/chats${query.toString() ? `?${query.toString()}` : ''}`;
-  return api.get<{ data: { messages: ChatMessage[]; next_cursor: string | null; has_more: boolean } }>(endpoint);
+  return api.get<{ messages: ChatMessage[]; nextCursor: string | null; hasMore: boolean }>(endpoint);
 };
 
 /**

@@ -12,7 +12,7 @@ interface PageLayoutProps {
 const PageLayout = ({ children, className, containerClassName }: PageLayoutProps) => {
 
   const location = useLocation();
-  const isCreateOrEditPage = location.pathname.startsWith('/library/new') || location.pathname.startsWith('/library/edit');
+  const isCreateOrEditPage = location.pathname === '/log-rooms/new' || location.pathname === '/log-rooms/edit' || location.pathname === '/library/new' || location.pathname === '/library/edit';
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-background-main text-base-50 font-sans overflow-hidden">
@@ -31,7 +31,7 @@ const PageLayout = ({ children, className, containerClassName }: PageLayoutProps
           "mx-auto w-full max-w-7xl py-10 md:py-16 px-6",
           containerClassName
         )}>
-          <div className={cn('mx-auto w-full max-w-273', isCreateOrEditPage && 'flex justify-between')}>
+          <div className={cn('mx-auto w-full max-w-273 h-full', isCreateOrEditPage && 'flex justify-between max-w-full')}>
             {children}
           </div>
         </div>
