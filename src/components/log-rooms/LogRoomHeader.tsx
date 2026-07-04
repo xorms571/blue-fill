@@ -31,12 +31,6 @@ export const LogRoomHeader = ({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const timeSlots = [6, 9, 12, 15, 18, 21, 24, 3];
 
-  // Simple date formatter for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
-  };
-
   return (
     <header className="w-full flex flex-col items-center pt-16 pb-2">
       {/* Top Row */}

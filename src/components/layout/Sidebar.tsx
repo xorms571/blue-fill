@@ -29,7 +29,6 @@ const Sidebar = () => {
 
   const isHome = location.pathname === '/' || location.pathname.startsWith('/library');
   const isLogRoom = location.pathname.startsWith('/log-rooms');
-  const isFeed = location.pathname.startsWith('/feed');
   const isProfile = location.pathname.startsWith('/profile') || location.pathname.startsWith('/users');
 
   const handleLogout = async () => {

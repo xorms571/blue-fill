@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchBar from '../../components/common/SearchBar';
-import Dropdown from '../../components/common/Dropdown';
 import Button from '../../components/common/Button';
 import PageLayout from '../../components/layout/PageLayout';
 import { cn } from '../../lib/utils';
