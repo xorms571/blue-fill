@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Calendar, Share2, ArrowLeft, MessageCircleMore } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getImageUrl } from '../../lib/utils';
 import type { DayLogTimeSlot } from '../../lib/logRoomApi';
+import { MonthCalendar } from '../common/MonthCalendar';
 
 interface LogRoomHeaderProps {
   roomName: string;
@@ -29,7 +30,19 @@ export const LogRoomHeader = ({
 }: LogRoomHeaderProps) => {
   const navigate = useNavigate();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const calendarRef = useRef<HTMLDivElement>(null);
   const timeSlots = [6, 9, 12, 15, 18, 21, 24, 3];
+
+  useEffect(() => {
+    if (!isCalendarOpen) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setIsCalendarOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isCalendarOpen]);
 
   return (
     <header className="w-full flex flex-col items-center pt-16 pb-2">
@@ -88,22 +101,22 @@ export const LogRoomHeader = ({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-            className="p-2.5 rounded-full bg-background-main border border-gray-700 text-gray-400 hover:text-white transition-colors relative"
-          >
-            <Calendar size={20} />
+          <div ref={calendarRef} className="relative">
+            <button
+              onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+              className="p-2.5 rounded-full bg-background-main border border-gray-700 text-gray-400 hover:text-white transition-colors"
+            >
+              <Calendar size={20} />
+            </button>
             {isCalendarOpen && (
-              <div className="absolute right-0 top-full mt-2 bg-background-main border border-gray-700 rounded-lg p-4 shadow-xl z-50">
-                <input
-                  type="date"
+              <div className="absolute right-0 top-full mt-2 bg-background-main border border-gray-700 rounded-2xl p-4 shadow-xl z-50">
+                <MonthCalendar
                   value={selectedDate}
-                  onChange={(e) => { onDateChange(e.target.value); setIsCalendarOpen(false); }}
-                  className="bg-gray-800 text-white rounded p-1"
+                  onChange={(date) => { onDateChange(date); setIsCalendarOpen(false); }}
                 />
               </div>
             )}
-          </button>
+          </div>
 
           <button className="p-2.5 rounded-full bg-background-main border border-gray-700 text-gray-400 hover:text-white transition-colors">
             <Share2 size={20} />
