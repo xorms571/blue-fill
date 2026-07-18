@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getCharacterLibrary } from '../lib/characterApi';
 import type { CharacterCard, CharacterCardListResponse } from '../lib/characterApi';
+import { getErrorMessage } from '../lib/utils';
 
 export const useCharacterLibrary = (initialSize = 10) => {
   const [characters, setCharacters] = useState<CharacterCard[]>([]);
@@ -8,6 +9,7 @@ export const useCharacterLibrary = (initialSize = 10) => {
   const [error, setError] = useState<string | null>(null);
   const [hasNext, setHasNext] = useState(true);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [keyword, setKeyword] = useState('');
   const [sort, setSort] = useState<'LATEST' | 'POPULAR'>('LATEST');
@@ -24,7 +26,7 @@ export const useCharacterLibrary = (initialSize = 10) => {
         size: initialSize,
       });
 
-      const { content, nextCursor: newCursor, hasNext: newHasNext } = response;
+      const { content, nextCursor: newCursor, hasNext: newHasNext, total } = response;
       console.log(response);
 
 
@@ -36,8 +38,9 @@ export const useCharacterLibrary = (initialSize = 10) => {
 
       setNextCursor(newCursor);
       setHasNext(newHasNext);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch characters');
+      setTotalCount(total);
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to fetch characters'));
     } finally {
       setLoading(false);
     }
@@ -45,6 +48,7 @@ export const useCharacterLibrary = (initialSize = 10) => {
 
   // 키워드나 정렬이 바뀌면 처음부터 다시 로드
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCharacters(true);
   }, [keyword, sort]);
 
@@ -65,5 +69,6 @@ export const useCharacterLibrary = (initialSize = 10) => {
     setSort,
     loadMore,
     refresh: () => fetchCharacters(true),
+    totalCount
   };
 };

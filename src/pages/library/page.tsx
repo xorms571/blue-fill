@@ -25,6 +25,7 @@ const CharacterLibraryPage = () => {
     setSort,
     loadMore,
     refresh,
+    totalCount
   } = useCharacterLibrary();
 
   const [isFABOpen, setIsFABOpen] = useState(false);
@@ -58,7 +59,7 @@ const CharacterLibraryPage = () => {
 
       <LibrarySection
         title="라이브러리"
-        count={characters.length}
+        count={totalCount}
         sortOptions={sortOptions}
         sort={sort}
         onSortChange={(val) => setSort(val as 'LATEST' | 'POPULAR')}

@@ -21,6 +21,7 @@ export interface CharacterCardListResponse {
   content: CharacterCard[];
   nextCursor: string | null;
   hasNext: boolean;
+  total: number;
 }
 
 export interface CharacterCardCreateRequest {
