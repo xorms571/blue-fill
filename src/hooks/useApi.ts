@@ -9,7 +9,7 @@ interface UseApiState<T> {
   error: Error | null;
 }
 
-export function useApi<T = any>() {
+export function useApi<T = unknown>() {
   const [state, setState] = useState<UseApiState<T>>({
     data: null,
     loading: false,
@@ -17,7 +17,7 @@ export function useApi<T = any>() {
   });
 
   const request = useCallback(
-    async (method: ApiMethod, endpoint: string, payload?: any) => {
+    async (method: ApiMethod, endpoint: string, payload?: unknown) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -51,9 +51,9 @@ export function useApi<T = any>() {
     []
   );
 
-  const post = useCallback((endpoint: string, data?: any) => request('post', endpoint, data), [request]);
-  const put = useCallback((endpoint: string, data?: any) => request('put', endpoint, data), [request]);
-  const patch = useCallback((endpoint: string, data?: any) => request('patch', endpoint, data), [request]);
+  const post = useCallback((endpoint: string, data?: unknown) => request('post', endpoint, data), [request]);
+  const put = useCallback((endpoint: string, data?: unknown) => request('put', endpoint, data), [request]);
+  const patch = useCallback((endpoint: string, data?: unknown) => request('patch', endpoint, data), [request]);
   const del = useCallback((endpoint: string) => request('delete', endpoint), [request]);
 
   return {

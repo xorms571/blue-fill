@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { reissueToken, getMyProfile } from '../../lib/authApi';
 import { setAccessToken } from '../../lib/token';
+import { getErrorMessage } from '../../lib/utils';
 
 const CallbackPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const CallbackPage: React.FC = () => {
         // 메인 페이지로 이동
         navigate('/', { replace: true });
       } catch (error) {
-        console.error('Authentication failed:', error);
+        console.error(getErrorMessage(error, '인증에 실패했습니다.'));
         // 실패 시 토큰 삭제 및 로그아웃 처리
         setAccessToken(null);
         logout();

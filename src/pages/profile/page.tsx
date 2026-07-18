@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PageLayout from '../../components/layout/PageLayout';
 import { useAuthStore } from '../../store/useAuthStore';
+import type { User } from '../../store/useAuthStore';
 import Button from '../../components/common/Button';
 import Switch from '../../components/common/Switch';
 import { useUserCharacterCards } from '../../hooks/useUserCharacterCards';
@@ -12,7 +13,7 @@ import ProfileEditModal from '../../components/profile/ProfileEditModal';
 import type { CharacterCard } from '../../lib/characterApi';
 import { getCharacterCardDetail } from '../../lib/characterApi';
 import CharacterCardComponent from '../../components/character/CharacterCard';
-import { getImageUrl } from '../../lib/utils';
+import { getErrorMessage, getImageUrl } from '../../lib/utils';
 import { CharacterInfoModal } from '../../components/character/CharacterInfoModal';
 import { SettingIcon } from '../../components/icons/SettingIcon';
 import { LibrarySection } from '../../components/common/LibrarySection';
@@ -21,7 +22,7 @@ const ProfilePage = () => {
   const { publicId: paramPublicId } = useParams();
   const navigate = useNavigate();
   const { user: currentUser } = useAuthStore();
-  const [profileUser, setProfileUser] = useState<any>(null);
+  const [profileUser, setProfileUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterCard | null>(null);
@@ -38,11 +39,11 @@ const ProfilePage = () => {
       if (!targetPublicId) return;
       setLoading(true);
       try {
-        const userData = await api.get<any>(`/users/${targetPublicId}`);
+        const userData = await api.get<User>(`/users/${targetPublicId}`);
         console.log('서버에서 가져온 프로필 데이터:', userData);
         setProfileUser(userData);
       } catch (err) {
-        console.error('Failed to fetch profile:', err);
+        console.error(getErrorMessage(err, '프로필을 불러오는 중 오류가 발생했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -59,7 +60,7 @@ const ProfilePage = () => {
         const fullChar = await getCharacterCardDetail(char.publicId);
         setSelectedCharacter(fullChar);
       } catch (err) {
-        console.error('Failed to fetch character detail:', err);
+        console.error(getErrorMessage(err, '캐릭터 정보를 불러오는 중 오류가 발생했습니다.'));
       }
     }
   };
@@ -67,18 +68,18 @@ const ProfilePage = () => {
   const handleVisibilityChange = async (checked: boolean) => {
     try {
       await updateProfileVisibility(!checked); // isPrivate state와 반대
-      setProfileUser((prev: any) => ({ ...prev, isPublic: checked }));
+      setProfileUser((prev) => prev ? { ...prev, isPublic: checked } : prev);
     } catch (err) {
-      console.error('Failed to update visibility:', err);
+      console.error(getErrorMessage(err, '공개 여부 변경 중 오류가 발생했습니다.'));
     }
   };
 
   const handleEditSuccess = (newNickname: string, newImageUrl: string | null) => {
-    setProfileUser((prev: any) => ({
+    setProfileUser((prev) => prev ? {
       ...prev,
       nickname: newNickname,
       profileImageUrl: newImageUrl
-    }));
+    } : prev);
   };
 
 

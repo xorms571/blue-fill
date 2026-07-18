@@ -8,7 +8,7 @@ export interface User {
   nickname: string;
   profileImageUrl: string | null;
   email: string;
-  planId: number | null;
+  planName: string | null;
   isPublic: boolean;
   characterCount: number;
   postCount: number;

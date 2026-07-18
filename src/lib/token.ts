@@ -1,3 +1,5 @@
+import { getErrorMessage } from './utils';
+
 // 액세스 토큰 로컬 스토리지 키
 const ACCESS_TOKEN_KEY = 'accessToken';
 
@@ -49,7 +51,7 @@ export const getPublicIdFromToken = (token: string): string | null => {
     );
     return JSON.parse(jsonPayload).publicId;
   } catch (e) {
-    console.error('Failed to decode token:', e);
+    console.error(getErrorMessage(e, '토큰 디코딩에 실패했습니다.'));
     return null;
   }
 };

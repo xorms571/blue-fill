@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PageLayout from '../../../components/layout/PageLayout';
 import Button from '../../../components/common/Button';
 import { createCharacterCard } from '../../../lib/characterApi';
-import { cn } from '../../../lib/utils';
+import { cn, getErrorMessage } from '../../../lib/utils';
 import { useR2Upload } from '../../../hooks/useR2Upload';
 import Tabs from '../../../components/common/Tabs';
 import TextInput from '../../../components/common/TextInput';
@@ -99,8 +99,8 @@ const CharacterCreationPage = () => {
       });
       alert('캐릭터 카드가 생성되었습니다!');
       navigate('/library');
-    } catch (err: any) {
-      alert(`생성 실패: ${err.message}`);
+    } catch (err) {
+      alert(`생성 실패: ${getErrorMessage(err, '알 수 없는 오류')}`);
     } finally {
       setLoading(false);
     }

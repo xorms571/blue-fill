@@ -5,7 +5,7 @@ import Button from '../../components/common/Button';
 import { createLogRoom } from '../../lib/logRoomApi';
 import { useCharacterLibrary } from '../../hooks/useCharacterLibrary';
 import { useAuthStore } from '../../store/useAuthStore';
-import { cn, getImageUrl } from '../../lib/utils';
+import { cn, getErrorMessage, getImageUrl } from '../../lib/utils';
 import SearchBar from '../../components/common/SearchBar';
 import PageHeader from '../../components/common/PageHeader';
 
@@ -105,8 +105,9 @@ const LogRoomCreationPage = () => {
       });
       navigate(`/log-rooms/${response.publicId}`);
     } catch (err) {
-      console.error('Failed to create log room:', err);
-      alert('로그방 생성에 실패했습니다.');
+      const message = getErrorMessage(err, '로그방 생성에 실패했습니다.');
+      console.error(message);
+      alert(message);
     } finally {
       setIsSubmitting(false);
     }

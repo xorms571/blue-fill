@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { reissueToken, getMyProfile } from '../../lib/authApi';
 import { setAccessToken } from '../../lib/token';
+import { getErrorMessage } from '../../lib/utils';
 
 /**
  * 앱이 처음 로드될 때 쿠키를 이용해 세션을 복구하는 컴포넌트
@@ -29,7 +30,7 @@ const AuthInitializer: React.FC = () => {
         }
       } catch (error) {
         // 실패 시 세션 없음 (비로그인 상태 유지)
-        console.error('Session restore failed:', error);
+        console.error(getErrorMessage(error, '세션 복원에 실패했습니다.'));
         setAccessToken(null);
         logout();
       } finally {

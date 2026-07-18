@@ -3,6 +3,7 @@ import Button from '../common/Button';
 import TextInput from '../common/TextInput';
 import { updateProfile } from '../../lib/authApi';
 import { useAuthStore } from '../../store/useAuthStore';
+import { getErrorMessage } from '../../lib/utils';
 import { useR2Upload } from '../../hooks/useR2Upload';
 import { Modal } from '../common/Modal';
 import { ImageUpload, type ImageUploadHandle } from '../common/ImageUpload';
@@ -70,9 +71,10 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
 
       onSuccess(nickname, finalImageUrl);
       onClose();
-    } catch (error: any) {
-      console.error('Profile update failed:', error);
-      alert(error.message || '프로필 업데이트에 실패했습니다.');
+    } catch (error) {
+      const message = getErrorMessage(error, '프로필 업데이트에 실패했습니다.');
+      console.error(message);
+      alert(message);
     } finally {
       setIsLoading(false);
     }

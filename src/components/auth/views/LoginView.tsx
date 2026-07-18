@@ -2,6 +2,7 @@ import React from 'react';
 import { SOCIAL_LOGIN_URLS, getDevToken } from '../../../lib/authApi';
 import { setAccessToken } from '../../../lib/token';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { getErrorMessage } from '../../../lib/utils';
 import Button from '../../common/Button';
 
 const GoogleIcon = () => (
@@ -47,8 +48,9 @@ const LoginView: React.FC = () => {
             closeModal();
             window.location.reload(); // 프로필 정보를 다시 불러오기 위해 새로고침
         } catch (error) {
-            console.error("개발용 토큰 발급 실패:", error);
-            alert("토큰 발급에 실패했습니다. 서버 상태를 확인해주세요.");
+            const message = getErrorMessage(error, '토큰 발급에 실패했습니다. 서버 상태를 확인해주세요.');
+            console.error(message);
+            alert(message);
         }
     };
 

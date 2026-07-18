@@ -1,9 +1,10 @@
 import { useAuthStore } from '../store/useAuthStore';
 import { getAccessToken, setAccessToken } from './token';
 import { BASE_URL } from './config';
+import { getErrorMessage } from './utils';
 
 interface FetchOptions extends RequestInit {
-  data?: any;
+  data?: unknown;
 }
 
 // 재발급 중인지 여부를 저장하여 중복 요청 방지
@@ -37,7 +38,7 @@ const attemptTokenReissue = async (): Promise<string | null> => {
       return newToken;
     }
   } catch (err) {
-    console.error('Token reissue error:', err);
+    console.error(getErrorMessage(err, '토큰 재발급 중 오류가 발생했습니다.'));
   } finally {
     isReissuing = false;
   }
@@ -104,13 +105,13 @@ export const api = {
   get: <T>(endpoint: string, options?: FetchOptions) => 
     apiFetch<T>(endpoint, { ...options, method: 'GET' }),
   
-  post: <T>(endpoint: string, data?: any, options?: FetchOptions) => 
+  post: <T>(endpoint: string, data?: unknown, options?: FetchOptions) =>
     apiFetch<T>(endpoint, { ...options, method: 'POST', data }),
-  
-  put: <T>(endpoint: string, data?: any, options?: FetchOptions) => 
+
+  put: <T>(endpoint: string, data?: unknown, options?: FetchOptions) =>
     apiFetch<T>(endpoint, { ...options, method: 'PUT', data }),
-  
-  patch: <T>(endpoint: string, data?: any, options?: FetchOptions) => 
+
+  patch: <T>(endpoint: string, data?: unknown, options?: FetchOptions) =>
     apiFetch<T>(endpoint, { ...options, method: 'PATCH', data }),
   
   delete: <T>(endpoint: string, options?: FetchOptions) => 

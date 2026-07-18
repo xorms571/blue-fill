@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getPresignedUrl } from '../lib/imageApi';
+import { getErrorMessage } from '../lib/utils';
 
 export const useR2Upload = () => {
   const [isUploading, setIsUploading] = useState(false);
@@ -19,7 +20,7 @@ export const useR2Upload = () => {
       
       return key; // 서버에 저장할 key 반환
     } catch (error) {
-      console.error('R2 upload failed:', error);
+      console.error(getErrorMessage(error, 'R2 업로드에 실패했습니다.'));
       throw error;
     } finally {
       setIsUploading(false);

@@ -6,7 +6,7 @@ import PageLayout from '../../../components/layout/PageLayout';
 import Tabs from '../../../components/common/Tabs';
 import Button from '../../../components/common/Button';
 import TextInput from '../../../components/common/TextInput';
-import { cn } from '../../../lib/utils';
+import { cn, getErrorMessage } from '../../../lib/utils';
 import { EditIcon } from '../../../components/icons/EditIcon';
 import { TrashIcon } from '../../../components/icons/TrashIcon';
 import { R2_DOMAIN } from '../../../lib/config';
@@ -52,8 +52,9 @@ const CharacterEditPage = () => {
         });
         setImagePreview(data.imageUrl.startsWith('http') ? data.imageUrl : `${R2_DOMAIN}/${data.imageUrl}`);
       } catch (err) {
-        console.error('Failed to fetch character:', err);
-        alert('캐릭터 정보를 불러오는데 실패했습니다.');
+        const message = getErrorMessage(err, '캐릭터 정보를 불러오는데 실패했습니다.');
+        console.error(message);
+        alert(message);
       } finally {
         setLoading(false);
       }
@@ -125,8 +126,8 @@ const CharacterEditPage = () => {
       });
       alert('캐릭터 카드가 수정되었습니다!');
       navigate('/library');
-    } catch (err: any) {
-      alert(`수정 실패: ${err.message}`);
+    } catch (err) {
+      alert(`수정 실패: ${getErrorMessage(err, '알 수 없는 오류')}`);
     } finally {
       setLoading(false);
     }

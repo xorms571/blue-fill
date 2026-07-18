@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getUserCharacterCards } from '../lib/characterApi';
 import type { CharacterCard } from '../lib/characterApi';
+import { getErrorMessage } from '../lib/utils';
 
 export const useUserCharacterCards = (userPublicId: string | undefined, initialSize = 10) => {
   const [characters, setCharacters] = useState<CharacterCard[]>([]);
@@ -32,8 +33,8 @@ export const useUserCharacterCards = (userPublicId: string | undefined, initialS
 
       setNextCursor(newCursor);
       setHasNext(newHasNext);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch characters');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to fetch characters'));
     } finally {
       setLoading(false);
     }
@@ -41,6 +42,7 @@ export const useUserCharacterCards = (userPublicId: string | undefined, initialS
 
   useEffect(() => {
     if (userPublicId && userPublicId !== 'undefined') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCharacters(true);
     }
   }, [userPublicId, fetchCharacters]);

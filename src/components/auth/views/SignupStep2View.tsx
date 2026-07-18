@@ -5,6 +5,7 @@ import TextInput from '../../common/TextInput';
 import { ImageUpload } from '../../common/ImageUpload';
 import { updateProfile, getMyProfile } from '../../../lib/authApi';
 import { useR2Upload } from '../../../hooks/useR2Upload';
+import { getErrorMessage } from '../../../lib/utils';
 
 const SignupStep2View: React.FC = () => {
   const { setView, setAuthenticated } = useAuthStore();
@@ -53,8 +54,9 @@ const SignupStep2View: React.FC = () => {
       // 5. 성공 화면으로 이동
       setView('signup-success');
     } catch (error) {
-      console.error('Profile update failed:', error);
-      alert('프로필 업데이트에 실패했습니다. 다시 시도해주세요.');
+      const message = getErrorMessage(error, '프로필 업데이트에 실패했습니다. 다시 시도해주세요.');
+      console.error(message);
+      alert(message);
     } finally {
       setIsLoading(false);
     }
