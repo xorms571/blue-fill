@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { cn } from '../../lib/utils';
+import { cn, getErrorMessage } from '../../lib/utils';
 import { useAuthStore } from '../../store/useAuthStore';
 import { logout as apiLogout } from '../../lib/authApi';
 
@@ -16,6 +16,13 @@ const LogIcon = () => (
   </svg>
 );
 
+const FeedIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+  </svg>
+);
+
 const ProfileIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
@@ -29,6 +36,7 @@ const Sidebar = () => {
 
   const isHome = location.pathname === '/' || location.pathname.startsWith('/library');
   const isLogRoom = location.pathname.startsWith('/log-rooms');
+  const isFeed = location.pathname.startsWith('/feed');
   const isProfile = location.pathname.startsWith('/profile') || location.pathname.startsWith('/users');
 
   const handleLogout = async () => {
@@ -36,7 +44,7 @@ const Sidebar = () => {
       await apiLogout();
       logout();
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error(getErrorMessage(error, '로그아웃에 실패했습니다.'));
     }
   };
 
@@ -72,6 +80,16 @@ const Sidebar = () => {
           onClick={() => navigate('/log-rooms')}
         >
           <LogIcon />
+        </button>
+
+        <button
+          className={cn(
+            "p-2 transition-colors cursor-pointer rounded-xl",
+            isFeed ? "text-primary md:bg-primary/10" : "text-base-500 hover:text-primary"
+          )}
+          onClick={() => navigate('/feed')}
+        >
+          <FeedIcon />
         </button>
 
         {isAuthenticated ? (

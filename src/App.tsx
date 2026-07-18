@@ -6,6 +6,7 @@ import CallbackPage from './pages/auth/CallbackPage';
 import LogRoomListPage from './pages/log-rooms/LogRoomListPage';
 import { LogRoomPage } from './pages/log-rooms/LogRoomPage';
 import LogRoomCreationPage from './pages/log-rooms/LogRoomCreationPage';
+import LogRoomPostListPage from './pages/log-rooms/LogRoomPostListPage';
 import AuthModal from './components/auth/AuthModal';
 import AuthInitializer from './components/auth/AuthInitializer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -67,6 +68,14 @@ function App() {
           element={
             <ProtectedRoute>
               <LogRoomPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/feed"
+          element={
+            <ProtectedRoute>
+              <LogRoomPostListPage />
             </ProtectedRoute>
           }
         />
