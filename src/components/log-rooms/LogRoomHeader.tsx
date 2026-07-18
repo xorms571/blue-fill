@@ -15,6 +15,10 @@ interface LogRoomHeaderProps {
   isChatOpen: boolean;
   onToggleChat: () => void;
   timelineData: DayLogTimeSlot[];
+  markedDates?: Iterable<string>;
+  onCalendarMonthChange?: (year: number, month: number) => void;
+  onShare: () => void;
+  isSharing: boolean;
 }
 
 export const LogRoomHeader = ({
@@ -26,7 +30,11 @@ export const LogRoomHeader = ({
   onTimeSlotChange,
   isChatOpen,
   onToggleChat,
-  timelineData
+  timelineData,
+  markedDates,
+  onCalendarMonthChange,
+  onShare,
+  isSharing
 }: LogRoomHeaderProps) => {
   const navigate = useNavigate();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -45,7 +53,7 @@ export const LogRoomHeader = ({
   }, [isCalendarOpen]);
 
   return (
-    <header className="w-full flex flex-col items-center pt-16 pb-2">
+    <header className="w-full flex flex-col items-center pb-2">
       {/* Top Row */}
       <div className="w-full flex items-start justify-between px-8 mb-6">
         {/* Left: Back Button */}
@@ -75,12 +83,13 @@ export const LogRoomHeader = ({
           {/* Time Slot Selector */}
           <div className="flex items-center gap-8">
             {timeSlots.map(slot => {
-              const isSelected = selectedTimeSlot === slot;
-              const hasLog = (timelineData.find(t => t.timeSlot === slot)?.entries.length ?? 0) > 0;
+              const apiSlot = slot === 24 ? 0 : slot;
+              const isSelected = selectedTimeSlot === slot || selectedTimeSlot === apiSlot;
+              const hasLog = (timelineData.find(t => t.timeSlot === apiSlot || t.timeSlot === slot)?.entries.length ?? 0) > 0;
               return (
                 <button
                   key={slot}
-                  onClick={() => onTimeSlotChange(slot)}
+                  onClick={() => onTimeSlotChange(apiSlot)}
                   className="flex flex-col items-center gap-2 group"
                 >
                   <div className={`rounded-full transition-all ${isSelected
@@ -113,12 +122,18 @@ export const LogRoomHeader = ({
                 <MonthCalendar
                   value={selectedDate}
                   onChange={(date) => { onDateChange(date); setIsCalendarOpen(false); }}
+                  markedDates={markedDates}
+                  onVisibleMonthChange={onCalendarMonthChange}
                 />
               </div>
             )}
           </div>
 
-          <button className="p-2.5 rounded-full bg-background-main border border-gray-700 text-gray-400 hover:text-white transition-colors">
+          <button
+            onClick={onShare}
+            disabled={isSharing}
+            className="p-2.5 rounded-full bg-background-main border border-gray-700 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Share2 size={20} />
           </button>
         </div>

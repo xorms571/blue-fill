@@ -10,7 +10,7 @@ import { LibrarySection } from '../../components/common/LibrarySection';
 import { CalendarIcon } from '../../components/icons/CalendarIcon';
 import { LockIcon } from '../../components/icons/LockIcon';
 import { CrownIcon } from '../../components/icons/CrownIcon';
-import { getImageUrl } from '../../lib/utils';
+import { getErrorMessage, getImageUrl } from '../../lib/utils';
 
 const SkeletonCard = () => (
   <div className="bg-base-950/40 border border-base-900/60 rounded-[28px] overflow-hidden animate-pulse">
@@ -34,6 +34,7 @@ const LogRoomListPage = () => {
   const [hasNext, setHasNext] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
   const [sort, setSort] = useState<SortOption>('LATEST');
 
   const sortOptions = [
@@ -46,7 +47,7 @@ const LogRoomListPage = () => {
     try {
       const cursor = isFirst ? undefined : (nextCursor || undefined);
       const response = await getMyLogRooms({ cursor, size: 12 });
-      const { content, nextCursor: newCursor, hasNext: newHasNext, } = response;
+      const { content, nextCursor: newCursor, hasNext: newHasNext, total } = response;
 
       if (isFirst) {
         setLogRooms(content);
@@ -55,14 +56,18 @@ const LogRoomListPage = () => {
       }
       setNextCursor(newCursor);
       setHasNext(newHasNext);
+      setTotalCount(total);
     } catch (err) {
-      console.error('Failed to fetch log rooms:', err);
+      console.error(getErrorMessage(err, '로그방 목록을 가져오는 중 오류가 발생했습니다.'));
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    // 마운트 시 목록을 페칭하는 표준 패턴 — react-hooks v7의 set-state-in-effect는
+    // fetchLogRooms 내부의 setState를 정적으로 감지해 여기서 오탐 경고를 낸다.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLogRooms(true);
   }, []);
 
@@ -90,7 +95,7 @@ const LogRoomListPage = () => {
 
       <LibrarySection
         title="로그방"
-        count={logRooms.length}
+        count={totalCount}
         sortOptions={sortOptions}
         sort={sort}
         onSortChange={(val) => setSort(val as SortOption)}
@@ -113,7 +118,7 @@ const LogRoomListPage = () => {
               <div className="relative aspect-video bg-base-900">
                 <div className="absolute inset-0 overflow-hidden">
                   <img
-                    src={getImageUrl(room.participants[0]?.imageUrl) || '/default-room.png'}
+                    src={getImageUrl(room.backgroundImageUrl) || '/default-room.png'}
                     alt={room.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
@@ -131,6 +136,9 @@ const LogRoomListPage = () => {
 
               {/* Info panel */}
               <div className="p-6">
+                <p className="text-[11px] text-base-500 font-medium truncate mb-1">
+                  {room.participants.map(p => p.name).join(', ')}
+                </p>
                 <h3 className="flex items-center gap-2 text-header-3 font-bold text-white tracking-tight line-clamp-1 group-hover:text-primary transition-colors">
                   {room.name}
                   {room.isOwner && <CrownIcon className="shrink-0 text-primary" />}

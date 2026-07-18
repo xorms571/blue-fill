@@ -1,5 +1,6 @@
 import { Send, Crown } from 'lucide-react';
-import type { DayLogTimeSlot, LogRoomParticipant, SharedPost, DayLogEntry } from '../../lib/logRoomApi';
+import { useMemo } from 'react';
+import type { ChatMessage, DayLogTimeSlot, LogRoomParticipant, SharedPost, DayLogEntry } from '../../lib/logRoomApi';
 import { getImageUrl } from '../../lib/utils';
 import Button from '../common/Button';
 import { PlusIcon } from '../icons/PlusIcon';
@@ -7,6 +8,7 @@ import { PlusIcon } from '../icons/PlusIcon';
 interface LogTimelineProps {
   timelineData: DayLogTimeSlot[];
   sharedPosts: SharedPost[];
+  chatMessages: ChatMessage[];
   participants: LogRoomParticipant[];
   memberNames: Record<string, string>;
   selectedDate: string;
@@ -17,7 +19,7 @@ interface LogTimelineProps {
 }
 
 export const LogTimeline = ({
-  timelineData, sharedPosts, participants, memberNames, selectedDate, selectedTimeSlot, onUpload, onReply
+  timelineData, sharedPosts, chatMessages, participants, memberNames, selectedDate, selectedTimeSlot, onUpload, onReply
 }: LogTimelineProps) => {
   const slotData = timelineData.find((data) => data.timeSlot === selectedTimeSlot);
 
@@ -35,6 +37,20 @@ export const LogTimeline = ({
   const allEntries = [...(slotData?.entries || []), ...sharedEntries];
   const uniqueEntries = Array.from(new Map(allEntries.map(e => [e.photoPublicId, e])).values());
 
+  // 사진별 최신 답장 (quotedPhotoPublicId 기준)
+  const latestReplyByPhotoId = useMemo(() => {
+    const map = new Map<string, ChatMessage>();
+    for (const msg of chatMessages) {
+      const photoId = msg.quotedPhotoPublicId;
+      if (!photoId) continue;
+      const prev = map.get(photoId);
+      if (!prev || new Date(msg.createdAt).getTime() > new Date(prev.createdAt).getTime()) {
+        map.set(photoId, msg);
+      }
+    }
+    return map;
+  }, [chatMessages]);
+
   // Fallback name lookup for participants with no entry in the selected slot,
   // built from any entry across the whole day (raw logs + shared posts)
   const nameByMember = new Map<string, string>();
@@ -51,6 +67,9 @@ export const LogTimeline = ({
           const displayName = memberNames[participant.memberPublicId] || nameByMember.get(participant.memberPublicId);
 
           if (entry) {
+            const latestReply = latestReplyByPhotoId.get(entry.photoPublicId);
+            const subtitle = latestReply?.content || entry.caption;
+
             return (
               <div
                 key={entry.photoPublicId}
@@ -85,15 +104,17 @@ export const LogTimeline = ({
                   </span>
                 </div>
 
-                {/* Bottom Left: Time and Caption */}
+                {/* Bottom Left: Time and Caption / Latest Reply */}
                 <div className="absolute bottom-5 left-5 flex flex-col gap-2">
                   <div className="flex items-baseline gap-3">
                     <span className="text-4xl font-bold text-gray-200 tabular-nums tracking-tighter drop-shadow-lg">
                       {selectedTimeSlot.toString().padStart(2, '0')}:00
                     </span>
-                    <p className="text-base font-medium text-gray-200/90 line-clamp-1 drop-shadow-md max-w-xl">
-                      {entry.caption}
-                    </p>
+                    {subtitle && (
+                      <p className="text-base font-medium text-gray-200/90 line-clamp-1 drop-shadow-md max-w-xl">
+                        {subtitle}
+                      </p>
+                    )}
                   </div>
                 </div>
 

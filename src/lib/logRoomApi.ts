@@ -2,6 +2,7 @@ import { api } from './api';
 
 export interface LogRoomParticipant {
   memberPublicId: string;
+  name: string;
   imageUrl: string | null;
   isUser: boolean;
   isOwner: boolean;
@@ -14,7 +15,7 @@ export interface LogRoomListItem {
   createdAt: string;
   isOwner: boolean;
   isPublic: boolean;
-  backgroundPhoto: string | null;
+  backgroundImageUrl: string | null;
   ownerPublicId: string;
   ownerNickname: string;
   participants: LogRoomParticipant[];
@@ -24,6 +25,7 @@ export interface LogRoomListResponse {
   content: LogRoomListItem[];
   nextCursor: string | null;
   hasNext: boolean;
+  total: number;
 }
 
 export interface DayLogEntry {
@@ -56,10 +58,11 @@ export interface LogCharacterCard {
 }
 
 export interface ChatMessage {
-  publicId: string;
   isMe: boolean;
   content: string;
   createdAt: string;
+  /** 서버 미제공 — 클라이언트가 사진 답장 시 로컬로 붙이는 값 */
+  quotedPhotoPublicId?: string | null;
 }
 
 export interface SharedPostPhoto {
@@ -90,6 +93,15 @@ export interface SharedPostListResponse {
   content: SharedPost[];
   nextCursor: string | null;
   hasNext: boolean;
+  total: number;
+}
+
+export interface PostShareResponse {
+  publicId: string;
+  logRoomPublicId: string;
+  postDate: string;
+  timeSlot: number;
+  createdAt: string;
 }
 
 /**
@@ -145,13 +157,7 @@ export const updateLogCharacterCard = async (publicId: string, memberPublicId: s
  * 로그 게시물 공유 (피드 게시물로)
  */
 export const shareLog = async (publicId: string, data: { postDate: string; timeSlot: number }) => {
-  return api.post<{
-      publicId: string;
-      logRoomPublicId: string;
-      postDate: string;
-      timeSlot: number;
-      createdAt: string;
-  }>(`/log-rooms/${publicId}/posts`, data);
+  return api.post<PostShareResponse>(`/log-rooms/${publicId}/posts`, data);
 };
 
 /**
@@ -166,6 +172,18 @@ export const getLogRoomPosts = async (
   if (params.size) query.append('size', params.size.toString());
 
   const endpoint = `/log-rooms/${publicId}/posts${query.toString() ? `?${query.toString()}` : ''}`;
+  return api.get<SharedPostListResponse>(endpoint);
+};
+
+/**
+ * 전체 게시물 목록 조회 (홈 피드 — 모든 로그방에서 공유된 게시물)
+ */
+export const getPosts = async (params: { cursor?: string; size?: number } = {}) => {
+  const query = new URLSearchParams();
+  if (params.cursor) query.append('cursor', params.cursor);
+  if (params.size) query.append('size', params.size.toString());
+
+  const endpoint = `/posts${query.toString() ? `?${query.toString()}` : ''}`;
   return api.get<SharedPostListResponse>(endpoint);
 };
 
@@ -192,13 +210,13 @@ export const deleteLogPhoto = async (publicId: string, photoPublicId: string) =>
 /**
  * 채팅방 메시지 목록 조회
  */
-export const getChatMessages = async (publicId: string, params: { cursor?: string; limit?: number } = {}) => {
+export const getChatMessages = async (publicId: string, params: { cursor?: number; size?: number } = {}) => {
   const query = new URLSearchParams();
-  if (params.cursor) query.append('cursor', params.cursor);
-  if (params.limit) query.append('limit', params.limit.toString());
+  if (params.cursor !== undefined) query.append('cursor', params.cursor.toString());
+  if (params.size !== undefined) query.append('size', params.size.toString());
 
   const endpoint = `/log-rooms/${publicId}/chats${query.toString() ? `?${query.toString()}` : ''}`;
-  return api.get<{ messages: ChatMessage[]; nextCursor: string | null; hasMore: boolean }>(endpoint);
+  return api.get<{ messages: ChatMessage[]; nextCursor: number | null; hasMore: boolean }>(endpoint);
 };
 
 /**
